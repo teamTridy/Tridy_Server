@@ -29,7 +29,7 @@ import java.util.Map;
 // 사용자 ID 토큰의 유효성과 무결성을 확인: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user
 /* ID 토큰을 확인하려면 앱 서버가 다음을 수행해야 합니다.
     서버의 공개 키를 사용하여 JWS E256 서명 확인, jwt의 sinature를 증명하라는 것은  공개키를 통해 signature 값을 복호화 하여 header값과 payload 값과 같은지 비교하라는 것입니다.
-    nonce인증 확인
+    nonce인증 확인 -> rest api방식 또는 웹페이지 방식으로 개발하는 경우에만 가능 (redirect url있는 경우)
     iss필드에 다음이 포함되어 있는지 확인하십시오.https://appleid.apple.com
     aud필드가 개발자의 필드인지 확인하십시오.client_id
     시간이 exp토큰 값 보다 빠른지 확인합니다.
@@ -58,11 +58,10 @@ public class AppleService {
             Claims claims = Jwts.parserBuilder().setSigningKey(publickey).build().parseClaimsJws(idToken).getBody();
 
             if (claims.get("iss").toString().equals(appleIssuer) //iss필드에 다음이 포함되어 있는지 확인하십시오.https://appleid.apple.com
-                    && claims.get("aud").toString().equals(appleClientId) //aud필드가 개발자의 필드인지 확인하십시오.client_id
-                    && claims.get("nonce").toString().equals(appleNonce)) {
+                    && claims.get("aud").toString().equals(appleClientId)) { //aud필드가 개발자의 필드인지 확인하십시오. Apple Developer 페이지에 App Bundle ID를 말한다. ex) com.xxx.xxx 형식이다.
+
                 return claims.get("sub").toString(); //Since this token is meant for your application, the value is the unique identifier for the user.
             }
-
         } catch (ExpiredJwtException e) { //시간이 exp토큰 값 보다 빠른지 확인합니다.
             throw e;
         }
