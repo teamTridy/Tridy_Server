@@ -20,6 +20,7 @@ import teamtridy.tridy.domain.repository.AccountRepository;
 import teamtridy.tridy.domain.repository.RefreshTokenRepository;
 import teamtridy.tridy.dto.SigninResponseDto;
 import teamtridy.tridy.dto.TokenDto;
+import teamtridy.tridy.exception.AlreadyExistsException;
 import teamtridy.tridy.util.SecurityUtil;
 
 @Service
@@ -73,5 +74,13 @@ public class AccountService implements UserDetailsService {
         // 5. 토큰 포함 현재 유저 정보 반환
         SigninResponseDto signinResponseDto = SigninResponseDto.of(getCurrentAccount(), tokenDto);
         return signinResponseDto;
+    }
+
+    @Transactional
+    public boolean isDuplicatedNickname(String nickname) {
+        if (accountRepository.existsByNickname(nickname)) {
+            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
+        }
+        return true;
     }
 }
