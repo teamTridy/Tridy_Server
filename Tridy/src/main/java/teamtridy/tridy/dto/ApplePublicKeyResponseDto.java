@@ -1,21 +1,21 @@
 package teamtridy.tridy.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Optional;
 
 // https://hwannny.tistory.com/71
-@Data
-@Builder
+@Getter
+@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplePublicKeyResponseDto {
     private List<Key> keys;
 
-    @Data
-    @Builder
+    @Getter
+    @Setter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Key {
         private String kty;
