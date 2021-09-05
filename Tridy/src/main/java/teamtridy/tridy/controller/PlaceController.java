@@ -2,6 +2,7 @@ package teamtridy.tridy.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +23,9 @@ public class PlaceController {
     public final PlaceService placeService;
 
     @GetMapping("")
-    public ResponseEntity<PlaceReadAllResponseDto> readAll(@RequestParam(defaultValue = "1") @NotNull Integer page,
-                                                           @RequestParam(defaultValue = "10") @NotNull Integer size) {
-        return ResponseEntity.ok(placeService.readAll(page, size));
+    public ResponseEntity<PlaceReadAllResponseDto> readAll(@RequestParam(defaultValue = "0") @NotNull Integer page,
+                                                           @RequestParam(defaultValue = "10") @NotNull Integer size,
+                                                           @RequestParam(required = false) @Length(min=2) String query){
+        return ResponseEntity.ok(placeService.readAll(page, size, query));
     }
 }
