@@ -36,21 +36,21 @@ public class Account extends BaseEntity{
     private String nickname;
 
     @Column
-    private boolean isPreferredFar;
+    private Boolean isPreferredFar;
 
     @Column
-    private boolean isPreferredPopular;
+    private Boolean  isPreferredPopular;
 
     @Column(nullable = false)
-    private boolean allowsLocationPermission;
+    private Boolean allowsLocationPermission;
 
     @Column(nullable = false)
-    private boolean isCompletedTest;
+    private Boolean hasCompletedTesting;
 
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
-    @OneToMany(mappedBy = "account")
-    private List<AccountHashtag> accountHashtag = new ArrayList<>();
+    @OneToMany(mappedBy = "account", orphanRemoval = true)
+    private List<AccountInterest> accountInterests = new ArrayList<>();
 
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
@@ -60,6 +60,14 @@ public class Account extends BaseEntity{
     @Builder.Default
     @OneToMany(mappedBy = "account")
     private List<Save> save = new ArrayList<>();
+
+    public void updateTestResult(Boolean isPreferredFar, boolean isPreferredPopular, List<AccountInterest> newAccountInterest) {
+        this.hasCompletedTesting = true;
+        this.isPreferredFar = isPreferredFar;
+        this.isPreferredPopular = isPreferredPopular;
+        this.accountInterests = newAccountInterest;
+    }
+
     /*
         cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
             특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들고 싶으면 영속성 전이(transitive persistence) 기능을 사용
