@@ -13,36 +13,32 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountHashtag extends BaseEntity{
+public class AccountInterest extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_hashtag_id", nullable = false)
+    @Column(name = "account_interest_id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id",nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "hashtag_id", nullable = false)
-    private Hashtag hashtag;
+    @JoinColumn(name = "interest_id", nullable = false)
+    private Interest interest;
 
 
     public void setAccount(Account account) {
         if (this.account != null) {
-            this.account.getAccountHashtag().remove(this);
+            this.account.getAccountInterests().remove(this);
         }
 
         this.account = account;
 
         // 편의 메소드는 한 곳에만 작성하거나 양쪽 다 작성할 수 있다. 양쪽 엔티티 둘다 작성한다면 무한루프에 빠지지 않도록 체크
-        if (!account.getAccountHashtag().contains(this)) {
-            account.getAccountHashtag().add(this);
+        if (!account.getAccountInterests().contains(this)) {
+            account.getAccountInterests().add(this);
         }
-    }
-
-    public void setHashtag(Hashtag hashtag) {
-        this.hashtag = hashtag;
     }
 
     /*
