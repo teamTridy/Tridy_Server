@@ -17,7 +17,7 @@ public class TestDto {
     @NotNull(message = "isPreferredPopular is required")
     private Boolean isPreferredPopular;
 
-    @Size(min=3, max=5, message = "관심사는 3개이상 5개이하 선택해야합니다.")
+    @Size(min = 3, max = 5, message = "관심사는 3개이상 5개이하 선택해야합니다.")
     @Valid
     @NotNull
     private List<InterestDto> interests;

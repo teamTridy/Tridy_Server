@@ -13,18 +13,18 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlaceHashtag extends BaseEntity{
+public class PlaceHashtag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "place_hashtag_id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "place_id",nullable = false)
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
     @ManyToOne
-    @JoinColumn(name = "hashtag_id",nullable = false)
+    @JoinColumn(name = "hashtag_id", nullable = false)
     private Hashtag hashtag;
 
 

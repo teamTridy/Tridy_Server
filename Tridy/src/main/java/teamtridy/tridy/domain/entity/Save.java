@@ -13,14 +13,14 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Save extends BaseEntity{
+public class Save extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "save_id", nullable = false)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id",nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @ManyToOne

@@ -13,10 +13,9 @@ import java.io.IOException;
 public class HttpLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        if(authentication == null) {
+        if (authentication == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        }
-        else {
+        } else {
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }

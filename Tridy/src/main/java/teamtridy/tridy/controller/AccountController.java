@@ -31,7 +31,7 @@ public class AccountController {
     public ResponseEntity<SigninResponseDto> login(@Valid @RequestBody SigninRequestDto signinRequestDto) {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();
-        String socialId = getSocialId(socialType,socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
+        String socialId = getSocialId(socialType, socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
         return ResponseEntity.ok(accountService.signin(socialId));
     }
 
@@ -39,7 +39,7 @@ public class AccountController {
     public ResponseEntity<SigninResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         String socialType = signupRequestDto.getSocialType();
         String socialToken = signupRequestDto.getSocialToken();
-        String socialId = getSocialId(socialType,socialToken);
+        String socialId = getSocialId(socialType, socialToken);
         accountService.signup(signupRequestDto.toServiceDto(socialId));
         return ResponseEntity.ok(accountService.signin(socialId));
     }
@@ -50,7 +50,7 @@ public class AccountController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private String getSocialId(String socialType, String socialToken){
+    private String getSocialId(String socialType, String socialToken) {
         String socialId = null;
         if (socialType.equals("kakao")) {
             socialId = kakaoService.getSocialId(socialToken);

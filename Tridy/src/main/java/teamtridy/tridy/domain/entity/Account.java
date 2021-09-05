@@ -23,10 +23,10 @@ import java.util.List;
     하나의 테이블에 정말 많은 수의 컬럼이 있는데, 몇몇개의 컬럼만 자주 업데이트 하는 경우에 사용하라고 되어있다.
     출처: https://velog.io/@freddiey/JPA%EC%9D%98-DynamicUpdate
 */
-public class Account extends BaseEntity{
+public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="account_id", nullable = false)
+    @Column(name = "account_id", nullable = false)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -39,7 +39,7 @@ public class Account extends BaseEntity{
     private Boolean isPreferredFar;
 
     @Column
-    private Boolean  isPreferredPopular;
+    private Boolean isPreferredPopular;
 
     @Column(nullable = false)
     private Boolean allowsLocationPermission;
@@ -61,7 +61,7 @@ public class Account extends BaseEntity{
     @OneToMany(mappedBy = "account")
     private List<Save> save = new ArrayList<>();
 
-    public void updateTestResult(Boolean isPreferredFar, boolean isPreferredPopular, List<AccountInterest> newAccountInterest) {
+    public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular, List<AccountInterest> newAccountInterest) {
         this.hasCompletedTesting = true;
         this.isPreferredFar = isPreferredFar;
         this.isPreferredPopular = isPreferredPopular;
