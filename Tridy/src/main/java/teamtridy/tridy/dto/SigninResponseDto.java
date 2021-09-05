@@ -2,22 +2,15 @@ package teamtridy.tridy.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import teamtridy.tridy.domain.entity.Account;
+import teamtridy.tridy.service.dto.AccountDto;
 
 @Data
 @Builder
 public class SigninResponseDto {
-    private Long id;
-    private String nickname;
+    private AccountDto account;
     private TokenDto token;
 
-    public static SigninResponseDto of(Account account, TokenDto token) {
-        SigninResponseDto signinResponseDto = SigninResponseDto
-                .builder()
-                .id(account.getId())
-                .nickname(account.getNickname())
-                .build();
-        signinResponseDto.setToken(token);
-        return signinResponseDto;
+    public static SigninResponseDto of(AccountDto accountDto, TokenDto tokenDto) {
+        return SigninResponseDto.builder().account(accountDto).token(tokenDto).build();
     }
 }
