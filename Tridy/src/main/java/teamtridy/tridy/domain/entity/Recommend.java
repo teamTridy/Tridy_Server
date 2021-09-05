@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "account_id", "place_id"}))
-public class Recommend extends BaseEntity{
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"account_id", "place_id"}))
+public class Recommend extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recommend_id", nullable = false)
@@ -24,7 +24,7 @@ public class Recommend extends BaseEntity{
     private Hashtag hashtag;
 
     @Column(nullable = false)
-    private int orderNum;
+    private Integer orderNum;
 
     @ManyToOne
     @JoinColumn(name = "recommend_type_id", nullable = false)

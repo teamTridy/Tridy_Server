@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Place extends BaseEntity{
+public class Place extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "place_id", nullable = false)
@@ -27,16 +27,16 @@ public class Place extends BaseEntity{
     private String address;
 
     @Column(nullable = false)
-    private double latitude;
+    private Double latitude;
 
     @Column(nullable = false)
-    private double longitude;
+    private Double Longitude;
 
     @Column
-    private long originContentId;
+    private Long originContentId;
 
     @Column
-    private long originContentTypeId;
+    private Long originContentTypeId;
 
     @Column
     private String thumbImgUrl;

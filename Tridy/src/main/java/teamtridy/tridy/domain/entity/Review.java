@@ -12,20 +12,20 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review extends BaseEntity{
+public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id", nullable = false)
     private Long id;
 
     @Column(nullable = false)
-    private int Rating;
+    private Integer rating;
 
     @Column(nullable = false)
     private String comment;
 
     @Column(nullable = false)
-    private boolean isPrivate;
+    private Boolean isPrivate;
 
     @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
