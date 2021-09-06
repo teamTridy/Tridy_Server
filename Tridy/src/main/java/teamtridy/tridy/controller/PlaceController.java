@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
+import teamtridy.tridy.dto.PlaceReadResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.service.PlaceService;
@@ -31,7 +32,7 @@ public class PlaceController {
     @GetMapping("/search")
     public ResponseEntity<PlaceReadAllResponseDto> readAllByQuery(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                                   @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
-                                                                  @RequestParam @Length(min = 2) String query) {
+                                                                  @RequestParam @Length(min = 2) String query) { //@RequestParam List<Long> subCatId
         return ResponseEntity.ok(placeService.readAllByQuery(page - 1, size, query));
     }
 
@@ -42,6 +43,11 @@ public class PlaceController {
      * URI는 리소스 TYPE의 특정 인스턴스를 고유하게 식별하는 리소스 식별자
      * URI should only consist of parts that will never change and will continue to uniquely identify that resource throughout its lifetime
      */
+
+    @GetMapping("/{placeId}")
+    public ResponseEntity<PlaceReadResponseDto> read(@PathVariable Long placeId) {
+        return new ResponseEntity(placeService.read(placeId), HttpStatus.OK);
+    }
 
     @PostMapping("/{placeId}/picks")
     public ResponseEntity createPick(@CurrentUser Account account, @PathVariable Long placeId) {

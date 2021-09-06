@@ -16,6 +16,7 @@ import teamtridy.tridy.domain.repository.PickRepository;
 import teamtridy.tridy.domain.repository.PlaceRepository;
 import teamtridy.tridy.domain.repository.ReviewRepository;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
+import teamtridy.tridy.dto.PlaceReadResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.exception.AlreadyExistsException;
@@ -60,6 +61,13 @@ public class PlaceService {
         return placeReadAllResponseDto;
     }
 
+    public PlaceReadResponseDto read(Long placeId) {
+        Place place = placeRepository
+                .findById(placeId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+        return PlaceReadResponseDto.of(place);
+    }
+
     @Transactional
     public void createPick(Account account, Long placeId) {
         Place place = placeRepository
@@ -76,11 +84,11 @@ public class PlaceService {
 
     @Transactional
     public void deletePick(Account account, Long placeId) {
-        Place post = placeRepository
+        Place place = placeRepository
                 .findById(placeId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
 
-        Pick pick = pickRepository.findByAccountAndPlace(account, post);
+        Pick pick = pickRepository.findByAccountAndPlace(account, place);
         if (pick == null) {
             throw new NotFoundException("찜한 장소가 아닙니다.");
         }
