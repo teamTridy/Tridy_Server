@@ -23,7 +23,7 @@ import java.util.List;
     하나의 테이블에 정말 많은 수의 컬럼이 있는데, 몇몇개의 컬럼만 자주 업데이트 하는 경우에 사용하라고 되어있다.
     출처: https://velog.io/@freddiey/JPA%EC%9D%98-DynamicUpdate
 */
-public class Account extends BaseEntity {
+public class Account extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", nullable = false)
@@ -52,14 +52,13 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "account", orphanRemoval = true)
     private List<AccountInterest> accountInterests = new ArrayList<>();
 
-    // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private List<Review> Review = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private List<Save> save = new ArrayList<>();
+    private List<Pick> picks = new ArrayList<>();
 
     public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular, List<AccountInterest> newAccountInterest) {
         this.hasCompletedTesting = true;

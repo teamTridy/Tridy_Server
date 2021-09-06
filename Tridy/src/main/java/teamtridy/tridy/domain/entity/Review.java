@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review extends BaseEntity {
+public class Review extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id", nullable = false)
@@ -32,19 +32,37 @@ public class Review extends BaseEntity {
     private Place place;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     public void setAccount(Account account) {
         if (this.account != null) {
-            this.account.getReview().remove(this);
+            this.account.getReviews().remove(this);
         }
 
         this.account = account;
         // 편의 메소드는 한 곳에만 작성하거나 양쪽 다 작성할 수 있다. 양쪽 엔티티 둘다 작성한다면 무한루프에 빠지지 않도록 체크
-        if (!account.getReview().contains(this)) {
-            account.getReview().add(this);
+        if (!account.getReviews().contains(this)) {
+            account.getReviews().add(this);
         }
+    }
+
+    public void setPlace(Place place) {
+        if (this.place != null) {
+            this.place.getReviews().remove(this);
+        }
+
+        this.place = place;
+        // 편의 메소드는 한 곳에만 작성하거나 양쪽 다 작성할 수 있다. 양쪽 엔티티 둘다 작성한다면 무한루프에 빠지지 않도록 체크
+        if (!place.getReviews().contains(this)) {
+            place.getReviews().add(this);
+        }
+    }
+
+    public void update(Integer rating,String comment, Boolean isPrivate) {
+        this.rating = rating;
+        this.comment = comment;
+        this.isPrivate = isPrivate;
     }
 
     /*
