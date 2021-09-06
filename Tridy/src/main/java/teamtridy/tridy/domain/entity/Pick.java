@@ -13,10 +13,10 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Save extends BaseEntity {
+public class Pick extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "save_id", nullable = false)
+    @Column(name = "pick_id", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -30,19 +30,15 @@ public class Save extends BaseEntity {
 
     public void setAccount(Account account) {
         if (this.account != null) {
-            this.account.getSave().remove(this);
+            this.account.getPicks().remove(this);
         }
 
         this.account = account;
 
         // 편의 메소드는 한 곳에만 작성하거나 양쪽 다 작성할 수 있다. 양쪽 엔티티 둘다 작성한다면 무한루프에 빠지지 않도록 체크
-        if (!account.getSave().contains(this)) {
-            account.getSave().add(this);
+        if (!account.getPicks().contains(this)) {
+            account.getPicks().add(this);
         }
-    }
-
-    public void setPlace(Place Place) {
-        this.place = place;
     }
 
     /*
