@@ -15,15 +15,14 @@ import teamtridy.tridy.domain.entity.Review;
 import teamtridy.tridy.domain.repository.PickRepository;
 import teamtridy.tridy.domain.repository.PlaceRepository;
 import teamtridy.tridy.domain.repository.ReviewRepository;
-import teamtridy.tridy.dto.PlaceReadAllResponseDto;
-import teamtridy.tridy.dto.PlaceReadResponseDto;
-import teamtridy.tridy.dto.ReviewCreateRequestDto;
-import teamtridy.tridy.dto.ReviewUpdateRequestDto;
+import teamtridy.tridy.dto.*;
 import teamtridy.tridy.exception.AlreadyExistsException;
 import teamtridy.tridy.exception.NotFoundException;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,14 +35,12 @@ public class PlaceService {
     private final ReviewRepository reviewRepository;
 
     public PlaceReadAllResponseDto readAllByQuery(Integer page, Integer size, String query) {
-        PageRequest pageRequest;
-        pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size);
 
         Slice<Place> places = null;
-
         if (query != null) {
             query = query.strip().replace("\\s+", " ").replace(" ", "%");
-            places = placeRepository.findAllByQuery(pageRequest, query);
+            places = placeRepository.findAllByQuery(query, pageRequest);
         } else {
             places = placeRepository.findAll(pageRequest);
         }
@@ -94,6 +91,42 @@ public class PlaceService {
         }
 
         pickRepository.delete(pick);
+    }
+
+    @Transactional
+    public PlaceReviewReadAllResponseDto readAllReview(Long placeId, Long lastReviewId, Integer size) {
+        Place place = placeRepository
+                .findById(placeId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        // get review info
+        Long reviewTotalCount = reviewRepository.countByPlace(place);
+        Slice<Review> reviews = reviewRepository.findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,pageRequest);
+        List<ReviewDto> reviewDtos = reviews.stream()
+                .map(ReviewDto::of)
+                .collect(Collectors.toList());
+        Long newLastReviewId = reviewDtos.get(reviewDtos.size() - 1).getId();
+
+        // get rating info
+        Float ratingAverage = reviewRepository.getRatingAverage(place);
+        ArrayList<Integer> ratings = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        List<Float> ratingRatios = ratings.stream()
+                .map(rating -> reviewRepository.countByPlaceAndRating(place, rating))
+                .map(count -> Math.round(count / (float) reviewTotalCount * 100) / (float) 100.0 )//소수점 둘째자리까지 남기기
+                .collect(Collectors.toList());
+
+        return PlaceReviewReadAllResponseDto
+                .builder()
+                .lastReviewId(newLastReviewId)
+                .currentSize(reviews.getNumberOfElements())
+                .hasNextPage(reviews.hasNext())
+                .ratingAverage(ratingAverage)
+                .ratingRatios(ratingRatios)
+                .reviewTotalCount(reviewTotalCount)
+                .reviews(reviewDtos)
+                .build();
     }
 
     @Transactional

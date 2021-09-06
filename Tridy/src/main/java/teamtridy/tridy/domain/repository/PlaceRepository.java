@@ -11,5 +11,5 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("SELECT p FROM Place p " +
             "WHERE p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query% " +
             "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
-    Slice<Place> findAllByQuery(Pageable pageable, @Param("query") String query);
+    Slice<Place> findAllByQuery(@Param("query") String query, Pageable pageable);
 }

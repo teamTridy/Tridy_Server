@@ -62,6 +62,14 @@ public class PlaceController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/{placeId}/reviews")
+    public ResponseEntity<ReviewDto> readAllReview(@PathVariable Long placeId,
+                                                   @RequestParam(defaultValue = "9223372036854775807") Long lastReviewId, //Long.MAX_VALUE
+                                                   @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
+        return new ResponseEntity(placeService.readAllReview(placeId,lastReviewId,size), HttpStatus.OK);
+    }
+
+
     @PostMapping("/{placeId}/reviews")
     public ResponseEntity<ReviewDto> saveReview(@CurrentUser Account account, @PathVariable Long placeId, @Valid @RequestBody ReviewCreateRequestDto reviewCreateRequestDto) {
         return new ResponseEntity(placeService.createReview(account, placeId, reviewCreateRequestDto), HttpStatus.CREATED);

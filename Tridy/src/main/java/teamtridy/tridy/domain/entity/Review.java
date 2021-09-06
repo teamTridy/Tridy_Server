@@ -27,7 +27,7 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isPrivate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
