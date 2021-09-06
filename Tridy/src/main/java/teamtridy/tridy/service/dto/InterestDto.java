@@ -17,7 +17,7 @@ public class InterestDto { //멤버가 하나일때는 json에서 "id": 1 이렇
     private Long id;
     private String name;
 
-    public static InterestDto of(Interest interest){
+    public static InterestDto of(Interest interest) {
         return InterestDto.builder().id(interest.getId()).name(interest.getName()).build();
     }
 }

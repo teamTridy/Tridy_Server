@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location extends BaseEntity{
+public class Location extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id", nullable = false)
@@ -22,7 +22,7 @@ public class Location extends BaseEntity{
     private String name;
 
     @Column(nullable = false)
-    private int depth;
+    private Integer depth;
 
     @Column
     private Long parentId;

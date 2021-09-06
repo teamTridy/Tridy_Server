@@ -25,10 +25,10 @@ public class ApplePublicKeyResponseDto {
         private String n;
         private String e;
     }
-    
+
     public Optional<Key> getMatchedKeyBy(String kid, String alg) {
         return this.keys.stream()
-                        .filter(key -> key.getKid().equals(kid) && key.getAlg().equals(alg))
-                        .findFirst();
+                .filter(key -> key.getKid().equals(kid) && key.getAlg().equals(alg))
+                .findFirst();
     }
 }

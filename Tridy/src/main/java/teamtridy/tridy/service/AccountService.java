@@ -81,7 +81,7 @@ public class AccountService implements UserDetailsService {
         // 5. 토큰 포함 현재 유저 정보 반환
         Account account = getCurrentAccount();
         List<InterestDto> interestDtos = account.getAccountInterests().stream().map(accountInterest -> InterestDto.of(accountInterest.getInterest())).collect(Collectors.toList());
-        AccountDto accountDto = AccountDto.of(account, interestDtos) ;
+        AccountDto accountDto = AccountDto.of(account, interestDtos);
         SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
 
         return signinResponseDto;
@@ -109,7 +109,7 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
-    public boolean isDuplicatedNickname(String nickname) {
+    public Boolean isDuplicatedNickname(String nickname) {
         if (accountRepository.existsByNickname(nickname)) {
             throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
         }

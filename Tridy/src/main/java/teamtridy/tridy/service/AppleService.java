@@ -53,7 +53,7 @@ public class AppleService {
     private String appleUrlPublicKeys; //The identifier (App ID or Services ID) for your app.
 
     public String getSocialId(String idToken) {
-        try{
+        try {
             PublicKey publickey = getPublicKey(idToken); //서버의 공개 키를 사용하여 JWS E256 서명 확인
             Claims claims = Jwts.parserBuilder().setSigningKey(publickey).build().parseClaimsJws(idToken).getBody();
 

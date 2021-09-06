@@ -5,6 +5,8 @@ import teamtridy.tridy.domain.entity.Account;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Account findBySocialId(String socialId);
-    boolean existsByNickname(String nickname);
-    boolean existsBySocialId(String socialId);
+
+    Boolean existsByNickname(String nickname);
+
+    Boolean existsBySocialId(String socialId);
 }

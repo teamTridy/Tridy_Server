@@ -37,7 +37,7 @@ public class KakaoService {
 
 
         // Request access token info
-        ResponseEntity<KakaoInfoResponseDto> response = restTemplate.exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request,  KakaoInfoResponseDto.class);
+        ResponseEntity<KakaoInfoResponseDto> response = restTemplate.exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request, KakaoInfoResponseDto.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody().getId().toString();
