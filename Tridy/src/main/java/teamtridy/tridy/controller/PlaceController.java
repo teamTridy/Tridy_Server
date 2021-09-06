@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,8 +33,10 @@ public class PlaceController {
     @GetMapping("/search")
     public ResponseEntity<PlaceReadAllResponseDto> readAllByQuery(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                                   @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
-                                                                  @RequestParam @Length(min = 2) String query) { //@RequestParam List<Long> subCatId
-        return ResponseEntity.ok(placeService.readAllByQuery(page - 1, size, query));
+                                                                  @RequestParam @Length(min = 2) String query,
+                                                                  @RequestParam(required = false) List<Long> regionId,
+                                                                  @RequestParam(required = false) List<Long> category2Id) {
+        return ResponseEntity.ok(placeService.readAll(page - 1, size, query, regionId, category2Id));
     }
 
     /*

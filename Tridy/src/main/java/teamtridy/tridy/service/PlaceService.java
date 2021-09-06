@@ -8,13 +8,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamtridy.tridy.domain.entity.Account;
-import teamtridy.tridy.domain.entity.Pick;
-import teamtridy.tridy.domain.entity.Place;
-import teamtridy.tridy.domain.entity.Review;
-import teamtridy.tridy.domain.repository.PickRepository;
-import teamtridy.tridy.domain.repository.PlaceRepository;
-import teamtridy.tridy.domain.repository.ReviewRepository;
+import teamtridy.tridy.domain.entity.*;
+import teamtridy.tridy.domain.repository.*;
 import teamtridy.tridy.dto.*;
 import teamtridy.tridy.exception.AlreadyExistsException;
 import teamtridy.tridy.exception.NotFoundException;
@@ -33,16 +28,43 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PickRepository pickRepository;
     private final ReviewRepository reviewRepository;
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
 
-    public PlaceReadAllResponseDto readAllByQuery(Integer page, Integer size, String query) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+    public PlaceReadAllResponseDto readAll(Integer page, Integer size, String query, List<Long> locationIds, List<Long> category2Ids) {
+        List<Location> locations = null;
+        if (locationIds != null) {
+            locations = locationIds.stream()
+                    .map(locationId -> locationRepository.findById(locationId)
+                            .orElseThrow(() -> new NotFoundException("존재하지 않는 지역입니다.")))
+                    .collect(Collectors.toList());
+        }
 
-        Slice<Place> places = null;
+        List<Category> category3s = null;
+        if (category2Ids != null) {
+            category3s = category2Ids.stream()
+                    .map(subCatId -> categoryRepository.findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
+                            .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
+                    .map(category -> category.getChildCategories())
+                    .flatMap(list -> list.stream()) //stream을 이용하여 list합치기 https://jekal82.tistory.com/60
+                    .collect(Collectors.toList());
+        }
+
+        String cleanQuery = null;
         if (query != null) {
-            query = query.strip().replace("\\s+", " ").replace(" ", "%");
-            places = placeRepository.findAllByQuery(query, pageRequest);
+            cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Slice<Place> places = null;
+        if (locations != null && category3s != null) {
+            places = placeRepository.findAllByQueryAndCategoryInAndLocationIn(cleanQuery, category3s, locations, pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
+        } else if (locations != null && category3s == null) {
+            places = placeRepository.findAllByQueryAndLocationIn(cleanQuery, locations, pageRequest);
+        } else if (locations == null && category3s != null) {
+            places = placeRepository.findAllByQueryAndCategoryIn(cleanQuery, category3s, pageRequest);
         } else {
-            places = placeRepository.findAll(pageRequest);
+            places = placeRepository.findAllByQuery(cleanQuery,pageRequest);
         }
 
         List<PlaceDto> placeDtos = places.stream()
@@ -103,7 +125,7 @@ public class PlaceService {
 
         // get review info
         Long reviewTotalCount = reviewRepository.countByPlace(place);
-        Slice<Review> reviews = reviewRepository.findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,pageRequest);
+        Slice<Review> reviews = reviewRepository.findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false, pageRequest);
         List<ReviewDto> reviewDtos = reviews.stream()
                 .map(ReviewDto::of)
                 .collect(Collectors.toList());
@@ -114,7 +136,7 @@ public class PlaceService {
         ArrayList<Integer> ratings = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
         List<Float> ratingRatios = ratings.stream()
                 .map(rating -> reviewRepository.countByPlaceAndRating(place, rating))
-                .map(count -> Math.round(count / (float) reviewTotalCount * 100) / (float) 100.0 )//소수점 둘째자리까지 남기기
+                .map(count -> Math.round(count / (float) reviewTotalCount * 100) / (float) 100.0)//소수점 둘째자리까지 남기기
                 .collect(Collectors.toList());
 
         return PlaceReviewReadAllResponseDto
