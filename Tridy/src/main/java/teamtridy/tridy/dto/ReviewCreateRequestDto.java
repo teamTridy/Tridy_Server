@@ -27,9 +27,9 @@ public class ReviewCreateRequestDto {
 
     public Review toReview() {
         return Review.builder()
-            .rating(rating)
-            .comment(comment)
-            .isPrivate(isPrivate)
-            .build();
+                .rating(rating)
+                .comment(comment)
+                .isPrivate(isPrivate)
+                .build();
     }
 }

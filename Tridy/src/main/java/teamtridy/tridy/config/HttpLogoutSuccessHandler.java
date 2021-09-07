@@ -13,7 +13,7 @@ public class HttpLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws IOException, ServletException {
+            Authentication authentication) throws IOException, ServletException {
         if (authentication == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {

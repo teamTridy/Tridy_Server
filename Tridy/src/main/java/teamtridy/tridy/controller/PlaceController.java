@@ -40,13 +40,13 @@ public class PlaceController {
 
     @GetMapping("/search")
     public ResponseEntity<PlaceReadAllResponseDto> readAllByQuery(@CurrentUser Account account,
-        @RequestParam(defaultValue = "1") @Min(1) Integer page,
-        @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
-        @RequestParam @Length(min = 2) String query,
-        @RequestParam(required = false) List<Long> regionId,
-        @RequestParam(required = false) List<Long> category2Id) {
+            @RequestParam(defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
+            @RequestParam @Length(min = 2) String query,
+            @RequestParam(required = false) List<Long> regionId,
+            @RequestParam(required = false) List<Long> category2Id) {
         return ResponseEntity
-            .ok(placeService.readAll(account, page - 1, size, query, regionId, category2Id));
+                .ok(placeService.readAll(account, page - 1, size, query, regionId, category2Id));
     }
 
     /*
@@ -59,7 +59,7 @@ public class PlaceController {
 
     @GetMapping("/{placeId}")
     public ResponseEntity<PlaceReadResponseDto> read(@CurrentUser Account account,
-        @PathVariable Long placeId) {
+            @PathVariable Long placeId) {
         return new ResponseEntity(placeService.read(account, placeId), HttpStatus.OK);
     }
 
@@ -78,35 +78,35 @@ public class PlaceController {
 
     @GetMapping("/{placeId}/reviews")
     public ResponseEntity<ReviewDto> readAllReview(@PathVariable Long placeId,
-        @RequestParam(defaultValue = "9223372036854775807") Long lastReviewId, //Long.MAX_VALUE
-        @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
+            @RequestParam(defaultValue = "9223372036854775807") Long lastReviewId, //Long.MAX_VALUE
+            @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
         return new ResponseEntity(placeService.readAllReview(placeId, lastReviewId, size),
-            HttpStatus.OK);
+                HttpStatus.OK);
     }
 
 
     @PostMapping("/{placeId}/reviews")
     public ResponseEntity<ReviewDto> saveReview(@CurrentUser Account account,
-        @PathVariable Long placeId,
-        @Valid @RequestBody ReviewCreateRequestDto reviewCreateRequestDto) {
+            @PathVariable Long placeId,
+            @Valid @RequestBody ReviewCreateRequestDto reviewCreateRequestDto) {
         return new ResponseEntity(
-            placeService.createReview(account, placeId, reviewCreateRequestDto),
-            HttpStatus.CREATED);
+                placeService.createReview(account, placeId, reviewCreateRequestDto),
+                HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{placeId}/reviews/{reviewId}")
     public ResponseEntity<ReviewDto> updateReview(@CurrentUser Account account,
-        @PathVariable Long placeId, @PathVariable Long reviewId,
-        @Valid @RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto) {
+            @PathVariable Long placeId, @PathVariable Long reviewId,
+            @Valid @RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto) {
         return new ResponseEntity(
-            placeService.updateReview(account, placeId, reviewId, reviewUpdateRequestDto),
-            HttpStatus.OK);
+                placeService.updateReview(account, placeId, reviewId, reviewUpdateRequestDto),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/{placeId}/reviews/{reviewId}")
     public ResponseEntity deleteReview(@CurrentUser Account account, @PathVariable Long placeId,
-        @PathVariable Long reviewId) {
+            @PathVariable Long reviewId) {
         placeService.deleteReview(account, placeId, reviewId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

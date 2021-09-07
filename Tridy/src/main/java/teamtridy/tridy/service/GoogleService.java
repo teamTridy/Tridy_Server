@@ -28,10 +28,10 @@ public class GoogleService {
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport,
-                jsonFactory)
-                .setAudience(Collections.singletonList(
-                    googleClientId))  // Specify the CLIENT_ID of the app that accesses the backend:
-                .build();
+                    jsonFactory)
+                    .setAudience(Collections.singletonList(
+                            googleClientId))  // Specify the CLIENT_ID of the app that accesses the backend:
+                    .build();
 
             GoogleIdToken verifiedIdToken = null; // (Receive idTokenString by HTTPS POST)
 

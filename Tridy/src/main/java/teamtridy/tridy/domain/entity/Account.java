@@ -29,44 +29,35 @@ import lombok.NoArgsConstructor;
 */
 public class Account extends BaseTimeEntity {
 
+    @Builder.Default
+    @OneToMany(mappedBy = "account")
+    private final List<Review> reviews = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "account")
+    private final List<Pick> picks = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", nullable = false)
     private Long id;
-
     @Column(nullable = false, unique = true)
     private String socialId;
-
     @Column(nullable = false, unique = true)
     private String nickname;
-
     @Column
     private Boolean isPreferredFar;
-
     @Column
     private Boolean isPreferredPopular;
-
     @Column(nullable = false)
     private Boolean allowsLocationPermission;
-
     @Column(nullable = false)
     private Boolean hasCompletedTesting;
-
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
     @OneToMany(mappedBy = "account", orphanRemoval = true)
     private List<AccountInterest> accountInterests = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "account")
-    private final List<Review> reviews = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "account")
-    private final List<Pick> picks = new ArrayList<>();
-
     public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular,
-        List<AccountInterest> newAccountInterest) {
+            List<AccountInterest> newAccountInterest) {
         this.hasCompletedTesting = true;
         this.isPreferredFar = isPreferredFar;
         this.isPreferredPopular = isPreferredPopular;

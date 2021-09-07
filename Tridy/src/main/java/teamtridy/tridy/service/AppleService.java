@@ -60,15 +60,15 @@ public class AppleService {
         try {
             PublicKey publickey = getPublicKey(idToken); //서버의 공개 키를 사용하여 JWS E256 서명 확인
             Claims claims = Jwts.parserBuilder().setSigningKey(publickey).build()
-                .parseClaimsJws(idToken).getBody();
+                    .parseClaimsJws(idToken).getBody();
 
             if (claims.get("iss").toString().equals(appleIssuer)
-                //iss필드에 다음이 포함되어 있는지 확인하십시오.https://appleid.apple.com
-                && claims.get("aud").toString().equals(
-                appleClientId)) { //aud필드가 개발자의 필드인지 확인하십시오. Apple Developer 페이지에 App Bundle ID를 말한다. ex) com.xxx.xxx 형식이다.
+                    //iss필드에 다음이 포함되어 있는지 확인하십시오.https://appleid.apple.com
+                    && claims.get("aud").toString().equals(
+                    appleClientId)) { //aud필드가 개발자의 필드인지 확인하십시오. Apple Developer 페이지에 App Bundle ID를 말한다. ex) com.xxx.xxx 형식이다.
 
                 return claims.get("sub")
-                    .toString(); //Since this token is meant for your application, the value is the unique identifier for the user.
+                        .toString(); //Since this token is meant for your application, the value is the unique identifier for the user.
             }
         } catch (ExpiredJwtException e) { //시간이 exp토큰 값 보다 빠른지 확인합니다.
             throw e;
@@ -83,23 +83,23 @@ public class AppleService {
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
             ResponseEntity<ApplePublicKeyResponseDto> response = restTemplate
-                .exchange(appleUrlPublicKeys, HttpMethod.GET, request,
-                    ApplePublicKeyResponseDto.class);
+                    .exchange(appleUrlPublicKeys, HttpMethod.GET, request,
+                            ApplePublicKeyResponseDto.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 //get jwt token header
                 String headerOfIdentityToken = idToken.substring(0, idToken.indexOf(
-                    ".")); //jwt은 우선  header와 payload, signature로 구성되어있습니다. header에는 kid(key ID), alg(알고리즘 유형)으로 구성되어있고 payload는 전달하고자 하는 정보들이 담겨있습니다. signature는 header와 payload를 비밀키와 header에 있는 알고리즘 유형으로 암호화한 정보입니다.
+                        ".")); //jwt은 우선  header와 payload, signature로 구성되어있습니다. header에는 kid(key ID), alg(알고리즘 유형)으로 구성되어있고 payload는 전달하고자 하는 정보들이 담겨있습니다. signature는 header와 payload를 비밀키와 header에 있는 알고리즘 유형으로 암호화한 정보입니다.
                 Map<String, String> header = new ObjectMapper().readValue(
-                    new String(Base64.getDecoder().decode(headerOfIdentityToken),
-                        StandardCharsets.UTF_8),
-                    Map.class);
+                        new String(Base64.getDecoder().decode(headerOfIdentityToken),
+                                StandardCharsets.UTF_8),
+                        Map.class);
 
                 //identify token의 kid와 alg가 일치하는 public key 얻기
                 ApplePublicKeyResponseDto.Key key = response.getBody()
-                    .getMatchedKeyBy(header.get("kid"), header.get("alg"))
-                    .orElseThrow(() -> new NullPointerException(
-                        "Failed get public key from apple's id server."));
+                        .getMatchedKeyBy(header.get("kid"), header.get("alg"))
+                        .orElseThrow(() -> new NullPointerException(
+                                "Failed get public key from apple's id server."));
 
                 byte[] nBytes = Base64.getUrlDecoder().decode(key.getN());
                 byte[] eBytes = Base64.getUrlDecoder().decode(key.getE());

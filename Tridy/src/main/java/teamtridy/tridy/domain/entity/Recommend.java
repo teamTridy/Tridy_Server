@@ -38,23 +38,21 @@ public class Recommend extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "recommend_type_id", nullable = false)
     private RecommendType recommendType; //recommend type 기술
+    @ManyToOne
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+//, columnDefinition = "comment 'recommend 가 이번주 인기 기반 일 경우 값이 없음'")
+    private Account account;
 
     public void setRecommendType(RecommendType recommendType) {
         this.recommendType = recommendType;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "place_id", nullable = false)
-    private Place place;
-
     public void setPlace(Place place) {
         this.place = place;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-//, columnDefinition = "comment 'recommend 가 이번주 인기 기반 일 경우 값이 없음'")
-    private Account account;
 
     public void setAccount(Account account) {
         this.account = account;

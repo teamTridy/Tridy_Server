@@ -13,7 +13,7 @@ public class UserAccount extends User {
 
     public UserAccount(Account account) {
         super(account.getSocialId(), PasswordEncoderFactories.createDelegatingPasswordEncoder()
-            .encode(account.getSocialId()), List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                .encode(account.getSocialId()), List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.account = account;
     }
 }

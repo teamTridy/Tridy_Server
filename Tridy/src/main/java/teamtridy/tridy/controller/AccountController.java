@@ -34,7 +34,7 @@ public class AccountController {
 
     @PostMapping("/signin")
     public ResponseEntity<SigninResponseDto> login(
-        @Valid @RequestBody SigninRequestDto signinRequestDto) {
+            @Valid @RequestBody SigninRequestDto signinRequestDto) {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
@@ -43,7 +43,7 @@ public class AccountController {
 
     @PostMapping("/signup")
     public ResponseEntity<SigninResponseDto> signup(
-        @Valid @RequestBody SignupRequestDto signupRequestDto) {
+            @Valid @RequestBody SignupRequestDto signupRequestDto) {
         String socialType = signupRequestDto.getSocialType();
         String socialToken = signupRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken);
@@ -53,7 +53,7 @@ public class AccountController {
 
     @GetMapping("/duplicate/nickname")
     public ResponseEntity isDuplicatedNickname(
-        @RequestParam String nickname) { //(required = true) true
+            @RequestParam String nickname) { //(required = true) true
         accountService.isDuplicatedNickname(nickname);
         return new ResponseEntity(HttpStatus.OK);
     }

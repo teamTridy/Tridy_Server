@@ -17,11 +17,11 @@ public class ReviewDto {
 
     public static ReviewDto of(Review review) {
         return ReviewDto.builder()
-            .id(review.getId())
-            .rating(review.getRating())
-            .comment(review.getComment())
-            .isPrivate(review.getIsPrivate())
-            .createdAt(review.getCreatedAt().toLocalDate())
-            .build();
+                .id(review.getId())
+                .rating(review.getRating())
+                .comment(review.getComment())
+                .isPrivate(review.getIsPrivate())
+                .createdAt(review.getCreatedAt().toLocalDate())
+                .build();
     }
 }

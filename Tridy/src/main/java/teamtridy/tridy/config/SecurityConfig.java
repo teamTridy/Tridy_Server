@@ -26,39 +26,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-            .antMatchers("/h2-console/**", "/favicon.ico")
-            .mvcMatchers("/node_modules/**")
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .antMatchers("/h2-console/**", "/favicon.ico")
+                .mvcMatchers("/node_modules/**")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin",
-                "/api/docs").permitAll()
-            .anyRequest().authenticated();
+                .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin",
+                        "/api/docs").permitAll()
+                .anyRequest().authenticated();
         http.cors()
-            .disable();
+                .disable();
         http.csrf()
-            .disable();
+                .disable();
         http.headers().frameOptions()
-            .disable();
+                .disable();
 
         http.formLogin()
-            .disable();
+                .disable();
 
         http.logout()
-            .permitAll()
-            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-            .logoutSuccessHandler(logoutSuccessHandler)
-            .invalidateHttpSession(true);
+                .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .invalidateHttpSession(true);
 
         http.exceptionHandling()
-            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .accessDeniedHandler(jwtAccessDeniedHandler);
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler);
 
         http.sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.apply(new JwtSecurityConfig(tokenProvider));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

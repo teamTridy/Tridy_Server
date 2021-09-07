@@ -31,10 +31,10 @@ public class SignupRequestDto {
 
     public SignupDto toServiceDto(String socialId) {
         return SignupDto.builder()
-            .socialId(socialId)
-            .nickname(nickname)
-            .allowsLocationPermission(allowsLocationPermission)
-            .test(test)
-            .build();
+                .socialId(socialId)
+                .nickname(nickname)
+                .allowsLocationPermission(allowsLocationPermission)
+                .test(test)
+                .build();
     }
 }

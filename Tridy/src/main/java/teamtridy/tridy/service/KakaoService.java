@@ -33,7 +33,7 @@ public class KakaoService {
 
         // Set http entity
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,
-            headers); //HttpEntity<SubmitData> entity = new HttpEntity<>(requestDto, headers);
+                headers); //HttpEntity<SubmitData> entity = new HttpEntity<>(requestDto, headers);
 
 
         /*  getForEntity() 메서드의 경우에는 응답을 ResponseEntity 객체로 받게 됩니다.
@@ -44,7 +44,8 @@ public class KakaoService {
 
         // Request access token info
         ResponseEntity<KakaoInfoResponseDto> response = restTemplate
-            .exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request, KakaoInfoResponseDto.class);
+                .exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request,
+                        KakaoInfoResponseDto.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody().getId().toString();

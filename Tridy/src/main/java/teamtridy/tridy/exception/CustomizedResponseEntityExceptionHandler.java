@@ -19,13 +19,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     //WebRequest : 어디서 발생했는지에 대한 정보
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
-        Exception ex,
-        Object body,
-        HttpHeaders headers,
-        HttpStatus status,
-        WebRequest request) {
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         ExceptionResponse exceptionResponse =
-            new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+                new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -33,9 +33,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(AlreadyExistsException.class)
     public final ResponseEntity<ExceptionResponse> handleAlreadyExistsException(Exception ex,
-        WebRequest request) {
+            WebRequest request) {
         ExceptionResponse exceptionResponse =
-            new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+                new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 
         return new ResponseEntity(exceptionResponse, HttpStatus.CONFLICT);
     }
@@ -50,12 +50,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-        MethodArgumentNotValidException ex,
-        HttpHeaders headers,
-        HttpStatus status,
-        WebRequest request) {
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),
-            "Validation Failed", ex.getBindingResult().toString());
+                "Validation Failed", ex.getBindingResult().toString());
 
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }

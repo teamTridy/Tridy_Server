@@ -14,6 +14,12 @@ public class ApplePublicKeyResponseDto {
 
     private List<Key> keys;
 
+    public Optional<Key> getMatchedKeyBy(String kid, String alg) {
+        return this.keys.stream()
+                .filter(key -> key.getKid().equals(kid) && key.getAlg().equals(alg))
+                .findFirst();
+    }
+
     @Getter
     @Setter
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,11 +31,5 @@ public class ApplePublicKeyResponseDto {
         private String alg;
         private String n;
         private String e;
-    }
-
-    public Optional<Key> getMatchedKeyBy(String kid, String alg) {
-        return this.keys.stream()
-            .filter(key -> key.getKid().equals(kid) && key.getAlg().equals(alg))
-            .findFirst();
     }
 }

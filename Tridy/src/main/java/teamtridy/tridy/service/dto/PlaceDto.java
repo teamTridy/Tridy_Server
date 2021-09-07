@@ -15,15 +15,16 @@ public class PlaceDto {
     private String thumbImgUrl;
     private String address;
     private List<String> hashtags;
+    private Boolean isPicked;
 
     public static PlaceDto of(Place place) {
         PlaceDto placeDto = PlaceDto.builder().id(place.getId()).name(place.getName())
-            .thumbImgUrl(place.getThumbImgUrl()).address(place.getAddress()).build();
+                .thumbImgUrl(place.getThumbImgUrl()).address(place.getAddress()).build();
 
         if (place.getPlaceHashtag().size() != 0) {
             List<String> hashtags = place.getPlaceHashtag().stream()
-                .map(placeHashtag -> placeHashtag.getHashtag().getName())
-                .collect(Collectors.toList());
+                    .map(placeHashtag -> placeHashtag.getHashtag().getName())
+                    .collect(Collectors.toList());
             placeDto.setHashtags(hashtags);
         }
 

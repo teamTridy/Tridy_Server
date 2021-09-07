@@ -28,10 +28,10 @@ public class SignupDto {
 
     public Account toAccount() {
         return Account.builder()
-            .socialId(socialId)
-            .nickname(nickname)
-            .allowsLocationPermission(allowsLocationPermission)
-            .hasCompletedTesting(false)
-            .build();
+                .socialId(socialId)
+                .nickname(nickname)
+                .allowsLocationPermission(allowsLocationPermission)
+                .hasCompletedTesting(false)
+                .build();
     }
 }

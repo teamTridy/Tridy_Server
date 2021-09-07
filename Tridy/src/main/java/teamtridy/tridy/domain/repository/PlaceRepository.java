@@ -13,30 +13,30 @@ import teamtridy.tridy.domain.entity.Place;
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     @Query("SELECT p FROM Place p " +
-        "WHERE p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query% " +
-        "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
+            "WHERE p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query% " +
+            "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
     Slice<Place> findAllByQuery(@Param("query") String query, Pageable pageable);
 
     @Query("SELECT p FROM Place p " +
-        "WHERE p.location in :locations AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
-        +
-        "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
+            "WHERE p.location in :locations AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
+            +
+            "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
     Slice<Place> findAllByQueryAndLocationIn(String query, List<Location> locations,
-        Pageable pageable);
+            Pageable pageable);
 
     @Query("SELECT p FROM Place p " +
-        "WHERE p.category in :categories AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
-        +
-        "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
+            "WHERE p.category in :categories AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
+            +
+            "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
     Slice<Place> findAllByQueryAndCategoryIn(String query, List<Category> categories,
-        Pageable pageable);
+            Pageable pageable);
 
     @Query("SELECT p FROM Place p " +
-        "WHERE  p.location in :locations AND p.category in :categories AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
-        +
-        "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
+            "WHERE  p.location in :locations AND p.category in :categories AND (p.name LIKE %:query% OR p.intro LIKE %:query% OR p.story LIKE %:query%) "
+            +
+            "ORDER BY (CASE WHEN p.name LIKE %:query% THEN 1 WHEN p.intro LIKE %:query% THEN 2 ELSE 3 END), p.id")
     Slice<Place> findAllByQueryAndCategoryInAndLocationIn(String query, List<Category> categories,
-        List<Location> locations, Pageable pageable);
+            List<Location> locations, Pageable pageable);
 
 
 }

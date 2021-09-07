@@ -23,22 +23,22 @@ public class PlaceReadResponseDto {
 
     public static PlaceReadResponseDto of(Place place) {
         PlaceReadResponseDto placeDto = PlaceReadResponseDto
-            .builder()
-            .id(place.getId())
-            .name(place.getName())
-            .imgUrl(place.getImgUrl())
-            .address(place.getAddress())
-            .rep(place.getRep())
-            .mapUrl(place.getMapUrl())
-            .intro(place.getIntro())
-            .story(place.getStory())
-            .info(place.getInfo())
-            .build();
+                .builder()
+                .id(place.getId())
+                .name(place.getName())
+                .imgUrl(place.getImgUrl())
+                .address(place.getAddress())
+                .rep(place.getRep())
+                .mapUrl(place.getMapUrl())
+                .intro(place.getIntro())
+                .story(place.getStory())
+                .info(place.getInfo())
+                .build();
 
         if (place.getPlaceHashtag().size() != 0) {
             List<String> hashtags = place.getPlaceHashtag().stream()
-                .map(placeHashtag -> placeHashtag.getHashtag().getName())
-                .collect(Collectors.toList());
+                    .map(placeHashtag -> placeHashtag.getHashtag().getName())
+                    .collect(Collectors.toList());
             placeDto.setHashtags(hashtags);
         }
         return placeDto;
