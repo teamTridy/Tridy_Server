@@ -31,10 +31,10 @@ public class Account extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private final List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private final List<Pick> picks = new ArrayList<>();
+    private List<Pick> picks = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", nullable = false)

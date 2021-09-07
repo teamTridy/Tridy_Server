@@ -3,6 +3,7 @@ package teamtridy.tridy.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -60,10 +61,9 @@ public class PlaceService {
                     .map(subCatId -> categoryRepository
                             .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
                             .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
-                    .map(category -> category.getChildCategories())
+                    .map(Category::getChildCategories)
                     .flatMap(
-                            list -> list
-                                    .stream()) //stream을 이용하여 list합치기 https://jekal82.tistory.com/60
+                            Collection::stream) //stream을 이용하여 list합치기
                     .collect(Collectors.toList());
         }
 
@@ -89,7 +89,7 @@ public class PlaceService {
         }
 
         List<PlaceDto> placeDtos = places.stream()
-                .map(PlaceDto::of)
+                .map(place -> PlaceDto.of(place, account))
                 .collect(Collectors.toList());
 
         PlaceReadAllResponseDto placeReadAllResponseDto = PlaceReadAllResponseDto.builder()
@@ -105,7 +105,7 @@ public class PlaceService {
         Place place = placeRepository
                 .findById(placeId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
-        return PlaceReadResponseDto.of(place);
+        return PlaceReadResponseDto.of(place, account);
     }
 
     @Transactional

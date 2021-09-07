@@ -25,10 +25,10 @@ public class Place extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "place")
     @Builder.Default
-    private final List<PlaceHashtag> placeHashtag = new ArrayList<>();
+    private List<PlaceHashtag> placeHashtag = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
-    private final List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "place_id", nullable = false)

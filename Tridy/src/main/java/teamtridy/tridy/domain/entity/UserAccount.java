@@ -9,7 +9,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 @Getter
 public class UserAccount extends User {
 
-    private final Account account;
+    private Account account;
 
     public UserAccount(Account account) {
         super(account.getSocialId(), PasswordEncoderFactories.createDelegatingPasswordEncoder()

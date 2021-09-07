@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
+import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.Place;
 
 @Data
@@ -20,8 +21,9 @@ public class PlaceReadResponseDto {
     private String story;
     private String info;
     private List<String> hashtags;
+    private Boolean isPicked;
 
-    public static PlaceReadResponseDto of(Place place) {
+    public static PlaceReadResponseDto of(Place place, Account account) {
         PlaceReadResponseDto placeDto = PlaceReadResponseDto
                 .builder()
                 .id(place.getId())
@@ -41,6 +43,14 @@ public class PlaceReadResponseDto {
                     .collect(Collectors.toList());
             placeDto.setHashtags(hashtags);
         }
+
+        Boolean isPicked = account.getPicks()
+                .stream().map(pick -> pick.getPlace())
+                .collect(Collectors.toList())
+                .contains(place);
+
+        placeDto.setIsPicked(isPicked);
+
         return placeDto;
     }
 }
