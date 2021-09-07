@@ -19,7 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class RefreshToken {
 
     @Id
-    private String email;
+    private String accountId;
 
     private String tokenValue;
 }
