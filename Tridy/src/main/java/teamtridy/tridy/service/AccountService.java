@@ -33,15 +33,14 @@ import teamtridy.tridy.domain.repository.ReviewRepository;
 import teamtridy.tridy.dto.AccountReviewReadAllResponseDto;
 import teamtridy.tridy.dto.PickReadAllResponseDto;
 import teamtridy.tridy.dto.SigninResponseDto;
+import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.dto.TokenDto;
 import teamtridy.tridy.exception.AlreadyExistsException;
 import teamtridy.tridy.exception.NotFoundException;
 import teamtridy.tridy.service.dto.AccountDto;
-import teamtridy.tridy.service.dto.InterestDto;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
 import teamtridy.tridy.service.dto.SignupDto;
-import teamtridy.tridy.service.dto.TendencyDto;
 import teamtridy.tridy.util.SecurityUtil;
 
 @Service
@@ -109,12 +108,12 @@ public class AccountService implements UserDetailsService {
 
         // 5. 토큰 포함 현재 유저 정보 반환
         Account account = getCurrentAccount();
-        List<InterestDto> interestDtos = account.getAccountInterests().stream()
-                .map(accountInterest -> InterestDto.of(accountInterest.getInterest()))
+        List<Long> interestIds = account.getAccountInterests().stream()
+                .map(accountInterest -> accountInterest.getInterest().getId())
                 .collect(Collectors.toList());
-        AccountDto accountDto = AccountDto.of(account, interestDtos);
-        SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
+        AccountDto accountDto = AccountDto.of(account, interestIds);
 
+        SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
         return signinResponseDto;
     }
 
@@ -125,27 +124,34 @@ public class AccountService implements UserDetailsService {
         }
         Account account = signupDto.toAccount();
         accountRepository.save(account);
-
-        TendencyDto tendencyDto = signupDto.getTendency();
-
-        if (tendencyDto != null) {
-            List<InterestDto> interestDtos = tendencyDto.getInterests();
-            List<Interest> interests = interestDtos.stream()
-                    .map(interestDto -> interestRepository.findById(interestDto.getId()).get())
-                    .collect(Collectors.toList());
-            List<AccountInterest> accountInterests = interests.stream().map(
-                    interest -> AccountInterest.builder().account(account).interest(interest)
-                            .build())
-                    .collect(Collectors.toList());
-            accountInterests = accountInterests.stream()
-                    .map(accountInterest -> accountInterestRepository.save(accountInterest))
-                    .collect(Collectors.toList());
-
-            account.updateTendency(tendencyDto.getIsPreferredFar(),
-                    tendencyDto.getIsPreferredPopular(),
-                    accountInterests);
-        }
     }
+
+    @Transactional
+    public AccountDto updateTendency(Account account, Long accountId,
+            TendencyUpdateRequestDto tendencyUpdateRequestDto) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+
+        if (account.getId() != accountId) {
+            throw new AccessDeniedException("수정 권한이 없습니다");
+        }
+
+        List<Interest> interests = tendencyUpdateRequestDto.getInterestIds().stream()
+                .map(interestId -> interestRepository.findById(interestId)
+                        .orElseThrow(() -> new NotFoundException("존재하지 않는 관심활동입니다.")))
+                .collect(Collectors.toList());
+
+        List<AccountInterest> accountInterests = interests.stream().map(
+                interest -> AccountInterest.builder().account(account).interest(interest)
+                        .build())
+                .map(accountInterest -> accountInterestRepository.save(accountInterest))
+                .collect(Collectors.toList());
+
+        tendencyUpdateRequestDto.apply(account, accountInterests);
+
+        return AccountDto.of(account, tendencyUpdateRequestDto.getInterestIds());
+    }
+
 
     @Transactional
     public PickReadAllResponseDto readAllPick(Account account, Long accountId,

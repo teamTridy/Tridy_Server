@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,10 +24,12 @@ import teamtridy.tridy.dto.PickReadAllResponseDto;
 import teamtridy.tridy.dto.SigninRequestDto;
 import teamtridy.tridy.dto.SigninResponseDto;
 import teamtridy.tridy.dto.SignupRequestDto;
+import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.service.AccountService;
 import teamtridy.tridy.service.AppleService;
 import teamtridy.tridy.service.GoogleService;
 import teamtridy.tridy.service.KakaoService;
+import teamtridy.tridy.service.dto.AccountDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,6 +75,15 @@ public class AccountController {
         accountService.signup(signupRequestDto.toServiceDto(socialId));
         return ResponseEntity.ok(accountService.signin(socialId));
     }
+
+    @PatchMapping("/{accountId}/tendency")
+    public ResponseEntity<AccountDto> updateTendency(@CurrentUser Account account,
+            @PathVariable Long accountId,
+            @Valid @RequestBody TendencyUpdateRequestDto tendencyUpdateRequestDto) {
+        return ResponseEntity
+                .ok(accountService.updateTendency(account, accountId, tendencyUpdateRequestDto));
+    }
+
 
     @GetMapping("/duplicate/nickname")
     public ResponseEntity isDuplicatedNickname(

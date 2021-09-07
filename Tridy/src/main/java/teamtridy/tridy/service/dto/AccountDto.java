@@ -13,8 +13,8 @@ public class AccountDto {
     private String nickname;
     private TendencyDto tendency;
 
-    public static AccountDto of(Account account, List<InterestDto> interests) {
-        TendencyDto tendency = TendencyDto.builder().interests(interests)
+    public static AccountDto of(Account account, List<Long> interestIds) {
+        TendencyDto tendency = TendencyDto.builder().interestIds(interestIds)
                 .isPreferredFar(account.getIsPreferredFar())
                 .isPreferredPopular(account.getIsPreferredPopular()).build();
         return AccountDto.builder().id(account.getId()).nickname(account.getNickname())
