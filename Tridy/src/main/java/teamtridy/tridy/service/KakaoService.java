@@ -2,7 +2,12 @@ package teamtridy.tridy.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -11,6 +16,7 @@ import teamtridy.tridy.dto.KakaoInfoResponseDto;
 @RequiredArgsConstructor
 @Service
 public class KakaoService {
+
     private final RestTemplate restTemplate;
 
     @Value("${social.kakao.client_id}")
@@ -26,7 +32,8 @@ public class KakaoService {
         headers.set("Authorization", "Bearer " + accessToken);
 
         // Set http entity
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers); //HttpEntity<SubmitData> entity = new HttpEntity<>(requestDto, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,
+                headers); //HttpEntity<SubmitData> entity = new HttpEntity<>(requestDto, headers);
 
 
         /*  getForEntity() 메서드의 경우에는 응답을 ResponseEntity 객체로 받게 됩니다.
@@ -35,9 +42,10 @@ public class KakaoService {
             getForObject는 응답을 Response DTO에 직접 매핑 할 수도 있습니다.
          */
 
-
         // Request access token info
-        ResponseEntity<KakaoInfoResponseDto> response = restTemplate.exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request, KakaoInfoResponseDto.class);
+        ResponseEntity<KakaoInfoResponseDto> response = restTemplate
+                .exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request,
+                        KakaoInfoResponseDto.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody().getId().toString();

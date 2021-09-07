@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin", "/api/docs").permitAll()
+                .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin",
+                        "/api/docs").permitAll()
                 .anyRequest().authenticated();
         http.cors()
                 .disable();

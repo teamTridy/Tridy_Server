@@ -1,5 +1,6 @@
 package teamtridy.tridy.exception;
 
+import java.util.Date;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.Date;
 
 @RestController
 @ControllerAdvice
@@ -33,7 +32,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
 
     @ExceptionHandler(AlreadyExistsException.class)
-    public final ResponseEntity<ExceptionResponse> handleAlreadyExistsException(Exception ex, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handleAlreadyExistsException(Exception ex,
+            WebRequest request) {
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 
@@ -49,10 +49,11 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }*/
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatus status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(),
                 "Validation Failed", ex.getBindingResult().toString());
 

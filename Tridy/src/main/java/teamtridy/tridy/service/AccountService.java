@@ -1,5 +1,7 @@
 package teamtridy.tridy.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +14,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamtridy.tridy.config.TokenProvider;
-import teamtridy.tridy.domain.entity.*;
+import teamtridy.tridy.domain.entity.Account;
+import teamtridy.tridy.domain.entity.AccountInterest;
+import teamtridy.tridy.domain.entity.Interest;
+import teamtridy.tridy.domain.entity.RefreshToken;
+import teamtridy.tridy.domain.entity.UserAccount;
 import teamtridy.tridy.domain.repository.AccountInterestRepository;
 import teamtridy.tridy.domain.repository.AccountRepository;
 import teamtridy.tridy.domain.repository.InterestRepository;
@@ -26,13 +32,11 @@ import teamtridy.tridy.service.dto.SignupDto;
 import teamtridy.tridy.service.dto.TestDto;
 import teamtridy.tridy.util.SecurityUtil;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
+
     private final AccountRepository accountRepository;
     private final AccountInterestRepository accountInterestRepository;
     private final InterestRepository interestRepository;
@@ -43,11 +47,13 @@ public class AccountService implements UserDetailsService {
     // 로그인한 유저 정보 반환 to @CurrentUser
     @Transactional(readOnly = true)
     public Account getCurrentAccount() {
-        return accountRepository.findBySocialId(SecurityUtil.getCurrentUserName()); //userName == socialId
+        return accountRepository
+                .findBySocialId(SecurityUtil.getCurrentUserName()); //userName == socialId
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //userName == socialId
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException { //userName == socialId
         Account account = accountRepository.findBySocialId(username);
 
         if (account == null) {
@@ -60,11 +66,13 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public SigninResponseDto signin(String socialId) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(socialId, socialId);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                socialId, socialId);
 
         // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
@@ -80,7 +88,9 @@ public class AccountService implements UserDetailsService {
 
         // 5. 토큰 포함 현재 유저 정보 반환
         Account account = getCurrentAccount();
-        List<InterestDto> interestDtos = account.getAccountInterests().stream().map(accountInterest -> InterestDto.of(accountInterest.getInterest())).collect(Collectors.toList());
+        List<InterestDto> interestDtos = account.getAccountInterests().stream()
+                .map(accountInterest -> InterestDto.of(accountInterest.getInterest()))
+                .collect(Collectors.toList());
         AccountDto accountDto = AccountDto.of(account, interestDtos);
         SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
 
@@ -100,11 +110,19 @@ public class AccountService implements UserDetailsService {
 
         if (testDto != null) {
             List<InterestDto> interestDtos = testDto.getInterests();
-            List<Interest> interests = interestDtos.stream().map(interestDto -> interestRepository.findById(interestDto.getId()).get()).collect(Collectors.toList());
-            List<AccountInterest> accountInterests = interests.stream().map(interest -> AccountInterest.builder().account(account).interest(interest).build()).collect(Collectors.toList());
-            accountInterests = accountInterests.stream().map(accountInterest -> accountInterestRepository.save(accountInterest)).collect(Collectors.toList());
+            List<Interest> interests = interestDtos.stream()
+                    .map(interestDto -> interestRepository.findById(interestDto.getId()).get())
+                    .collect(Collectors.toList());
+            List<AccountInterest> accountInterests = interests.stream().map(
+                    interest -> AccountInterest.builder().account(account).interest(interest)
+                            .build())
+                    .collect(Collectors.toList());
+            accountInterests = accountInterests.stream()
+                    .map(accountInterest -> accountInterestRepository.save(accountInterest))
+                    .collect(Collectors.toList());
 
-            account.updateTestResult(testDto.getIsPreferredFar(), testDto.getIsPreferredPopular(), accountInterests);
+            account.updateTestResult(testDto.getIsPreferredFar(), testDto.getIsPreferredPopular(),
+                    accountInterests);
         }
     }
 
