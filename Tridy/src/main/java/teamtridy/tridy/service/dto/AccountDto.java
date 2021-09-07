@@ -11,15 +11,13 @@ public class AccountDto {
 
     private Long id;
     private String nickname;
-    private Boolean allowsLocationPermission;
+    private TendencyDto tendency;
 
-    private TestDto test;
-
-    public static AccountDto of(Account account, List<InterestDto> interests) {
-        TestDto test = TestDto.builder().interests(interests)
+    public static AccountDto of(Account account, List<Long> interestIds) {
+        TendencyDto tendency = TendencyDto.builder().interestIds(interestIds)
                 .isPreferredFar(account.getIsPreferredFar())
                 .isPreferredPopular(account.getIsPreferredPopular()).build();
         return AccountDto.builder().id(account.getId()).nickname(account.getNickname())
-                .allowsLocationPermission(account.getAllowsLocationPermission()).test(test).build();
+                .tendency(tendency).build();
     }
 }

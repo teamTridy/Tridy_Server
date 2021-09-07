@@ -33,15 +33,14 @@ import teamtridy.tridy.domain.repository.ReviewRepository;
 import teamtridy.tridy.dto.AccountReviewReadAllResponseDto;
 import teamtridy.tridy.dto.PickReadAllResponseDto;
 import teamtridy.tridy.dto.SigninResponseDto;
+import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.dto.TokenDto;
 import teamtridy.tridy.exception.AlreadyExistsException;
 import teamtridy.tridy.exception.NotFoundException;
 import teamtridy.tridy.service.dto.AccountDto;
-import teamtridy.tridy.service.dto.InterestDto;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
 import teamtridy.tridy.service.dto.SignupDto;
-import teamtridy.tridy.service.dto.TestDto;
 import teamtridy.tridy.util.SecurityUtil;
 
 @Service
@@ -76,7 +75,14 @@ public class AccountService implements UserDetailsService {
         return new UserAccount(account);
     }
 
-    // 로그인
+    @Transactional
+    public Boolean isDuplicatedNickname(String nickname) {
+        if (accountRepository.existsByNickname(nickname)) {
+            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
+        }
+        return true;
+    }
+
     @Transactional
     public SigninResponseDto signin(String socialId) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -93,7 +99,7 @@ public class AccountService implements UserDetailsService {
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
-                .email(authentication.getName())
+                .accountId(authentication.getName())
                 .tokenValue(tokenDto.getRefreshToken())
                 .build();
 
@@ -102,16 +108,15 @@ public class AccountService implements UserDetailsService {
 
         // 5. 토큰 포함 현재 유저 정보 반환
         Account account = getCurrentAccount();
-        List<InterestDto> interestDtos = account.getAccountInterests().stream()
-                .map(accountInterest -> InterestDto.of(accountInterest.getInterest()))
+        List<Long> interestIds = account.getAccountInterests().stream()
+                .map(accountInterest -> accountInterest.getInterest().getId())
                 .collect(Collectors.toList());
-        AccountDto accountDto = AccountDto.of(account, interestDtos);
-        SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
+        AccountDto accountDto = AccountDto.of(account, interestIds);
 
+        SigninResponseDto signinResponseDto = SigninResponseDto.of(accountDto, tokenDto);
         return signinResponseDto;
     }
 
-    // 회원가입
     @Transactional
     public void signup(SignupDto signupDto) {
         if (accountRepository.existsBySocialId(signupDto.getSocialId())) {
@@ -119,34 +124,49 @@ public class AccountService implements UserDetailsService {
         }
         Account account = signupDto.toAccount();
         accountRepository.save(account);
-
-        TestDto testDto = signupDto.getTest();
-
-        if (testDto != null) {
-            List<InterestDto> interestDtos = testDto.getInterests();
-            List<Interest> interests = interestDtos.stream()
-                    .map(interestDto -> interestRepository.findById(interestDto.getId()).get())
-                    .collect(Collectors.toList());
-            List<AccountInterest> accountInterests = interests.stream().map(
-                    interest -> AccountInterest.builder().account(account).interest(interest)
-                            .build())
-                    .collect(Collectors.toList());
-            accountInterests = accountInterests.stream()
-                    .map(accountInterest -> accountInterestRepository.save(accountInterest))
-                    .collect(Collectors.toList());
-
-            account.updateTestResult(testDto.getIsPreferredFar(), testDto.getIsPreferredPopular(),
-                    accountInterests);
-        }
     }
 
     @Transactional
-    public Boolean isDuplicatedNickname(String nickname) {
-        if (accountRepository.existsByNickname(nickname)) {
-            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
+    public AccountDto read(Account account, Long accountId) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+
+        if (account.getId() != accountId) {
+            throw new AccessDeniedException("조회 권한이 없습니다");
         }
-        return true;
+
+        List<Long> interestIds = account.getAccountInterests().stream()
+                .map(accountInterest -> accountInterest.getInterest().getId())
+                .collect(Collectors.toList());
+        return AccountDto.of(account, interestIds);
     }
+
+    @Transactional
+    public AccountDto updateTendency(Account account, Long accountId,
+            TendencyUpdateRequestDto tendencyUpdateRequestDto) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+
+        if (account.getId() != accountId) {
+            throw new AccessDeniedException("수정 권한이 없습니다");
+        }
+
+        List<Interest> interests = tendencyUpdateRequestDto.getInterestIds().stream()
+                .map(interestId -> interestRepository.findById(interestId)
+                        .orElseThrow(() -> new NotFoundException("존재하지 않는 관심활동입니다.")))
+                .collect(Collectors.toList());
+
+        List<AccountInterest> accountInterests = interests.stream().map(
+                interest -> AccountInterest.builder().account(account).interest(interest)
+                        .build())
+                .map(accountInterest -> accountInterestRepository.save(accountInterest))
+                .collect(Collectors.toList());
+
+        tendencyUpdateRequestDto.apply(account, accountInterests);
+
+        return AccountDto.of(account, tendencyUpdateRequestDto.getInterestIds());
+    }
+
 
     @Transactional
     public PickReadAllResponseDto readAllPick(Account account, Long accountId,

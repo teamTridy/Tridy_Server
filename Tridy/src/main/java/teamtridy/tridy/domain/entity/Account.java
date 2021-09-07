@@ -2,6 +2,7 @@ package teamtridy.tridy.domain.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,20 +49,27 @@ public class Account extends BaseTimeEntity {
     @Column
     private Boolean isPreferredPopular;
     @Column(nullable = false)
-    private Boolean allowsLocationPermission;
-    @Column(nullable = false)
-    private Boolean hasCompletedTesting;
+    private Boolean hasTendency;
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
-    @OneToMany(mappedBy = "account", orphanRemoval = true)
+    @OneToMany(mappedBy = "account", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    // Parent가 삭제 되었을 때 Child도 함께 삭제시키는 역할을 수행
     private List<AccountInterest> accountInterests = new ArrayList<>();
 
-    public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular,
+    public void updateTendency(Boolean isPreferredFar, Boolean isPreferredPopular,
             List<AccountInterest> newAccountInterest) {
-        this.hasCompletedTesting = true;
+        this.hasTendency = true;
         this.isPreferredFar = isPreferredFar;
         this.isPreferredPopular = isPreferredPopular;
-        this.accountInterests = newAccountInterest;
+
+        //새로 만들어진 친구는 hibernate가 관리하지 않아서 문제가 된다고 한다. list를 바꾸고 싶으면 새 list를 만들어서 set하지 말고, 내용(content)을 지우고 새로 넣자.
+        //orphanRemoval 설정해놓았는데 왜 동작을안하지? https://willseungh0.tistory.com/67
+        //연결이 끊긴 accountInterest를 삭제하려면 어떻게 해야할까
+        //https://github.com/jyami-kim/Jyami-Java-Lab/issues/1
+        //orphanRemoval = true만으로는 삭제가 되지 않고 CascadeType.PERSIST 혹은 CascadeType.ALL 을 같이 선언하면 삭제 된다는 내용입니다.
+        //이제 제대로 동작함 ! 영속상태?? 원리 더 찾아보기!!
+        this.accountInterests.clear();
+        this.accountInterests.addAll(newAccountInterest);
     }
 
     /*

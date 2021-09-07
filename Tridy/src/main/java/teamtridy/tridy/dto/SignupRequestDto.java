@@ -1,13 +1,10 @@
 package teamtridy.tridy.dto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import teamtridy.tridy.service.dto.SignupDto;
-import teamtridy.tridy.service.dto.TestDto;
 
 @Data
 @Builder
@@ -23,18 +20,10 @@ public class SignupRequestDto {
     @NotBlank(message = "nickname is required")
     private String nickname;
 
-    @NotNull(message = "allowsLocationPermission is required")
-    private Boolean allowsLocationPermission;
-
-    @Valid
-    private TestDto test;
-
     public SignupDto toServiceDto(String socialId) {
         return SignupDto.builder()
                 .socialId(socialId)
                 .nickname(nickname)
-                .allowsLocationPermission(allowsLocationPermission)
-                .test(test)
                 .build();
     }
 }
