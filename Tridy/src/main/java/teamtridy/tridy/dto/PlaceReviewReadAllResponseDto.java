@@ -1,14 +1,14 @@
 package teamtridy.tridy.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import teamtridy.tridy.service.dto.ReviewDto;
 
-import java.util.List;
-
 @Data
 @Builder
 public class PlaceReviewReadAllResponseDto {
+
     private Long lastReviewId;
     private Integer currentSize;
     private Boolean hasNextPage;

@@ -1,18 +1,18 @@
 package teamtridy.tridy.dto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import teamtridy.tridy.service.dto.SignupDto;
 import teamtridy.tridy.service.dto.TestDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 @Data
 @Builder
 public class SignupRequestDto {
+
     @NotBlank(message = "socialType is required")
     private String socialType;
 
@@ -31,10 +31,10 @@ public class SignupRequestDto {
 
     public SignupDto toServiceDto(String socialId) {
         return SignupDto.builder()
-                .socialId(socialId)
-                .nickname(nickname)
-                .allowsLocationPermission(allowsLocationPermission)
-                .test(test)
-                .build();
+            .socialId(socialId)
+            .nickname(nickname)
+            .allowsLocationPermission(allowsLocationPermission)
+            .test(test)
+            .build();
     }
 }

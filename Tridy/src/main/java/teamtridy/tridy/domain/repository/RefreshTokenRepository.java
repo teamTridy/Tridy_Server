@@ -5,4 +5,5 @@ import teamtridy.tridy.domain.entity.RefreshToken;
 
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+
 }

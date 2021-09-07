@@ -7,6 +7,7 @@ import teamtridy.tridy.domain.entity.Hashtag;
 @Data
 @Builder
 public class HashtagDto {
+
     private Long id;
     private String name;
 

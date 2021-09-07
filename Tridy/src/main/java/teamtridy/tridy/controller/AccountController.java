@@ -1,11 +1,17 @@
 package teamtridy.tridy.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import teamtridy.tridy.dto.SigninRequestDto;
 import teamtridy.tridy.dto.SigninResponseDto;
 import teamtridy.tridy.dto.SignupRequestDto;
@@ -14,21 +20,21 @@ import teamtridy.tridy.service.AppleService;
 import teamtridy.tridy.service.GoogleService;
 import teamtridy.tridy.service.KakaoService;
 
-import javax.validation.Valid;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/accounts")
 @Validated
 @Slf4j
 public class AccountController {
+
     private final AccountService accountService;
     private final KakaoService kakaoService;
     private final GoogleService googleService;
     private final AppleService appleService;
 
     @PostMapping("/signin")
-    public ResponseEntity<SigninResponseDto> login(@Valid @RequestBody SigninRequestDto signinRequestDto) {
+    public ResponseEntity<SigninResponseDto> login(
+        @Valid @RequestBody SigninRequestDto signinRequestDto) {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
@@ -36,7 +42,8 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SigninResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<SigninResponseDto> signup(
+        @Valid @RequestBody SignupRequestDto signupRequestDto) {
         String socialType = signupRequestDto.getSocialType();
         String socialToken = signupRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken);
@@ -45,7 +52,8 @@ public class AccountController {
     }
 
     @GetMapping("/duplicate/nickname")
-    public ResponseEntity isDuplicatedNickname(@RequestParam String nickname) { //(required = true) true
+    public ResponseEntity isDuplicatedNickname(
+        @RequestParam String nickname) { //(required = true) true
         accountService.isDuplicatedNickname(nickname);
         return new ResponseEntity(HttpStatus.OK);
     }

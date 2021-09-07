@@ -7,6 +7,7 @@ import teamtridy.tridy.service.dto.AccountDto;
 @Data
 @Builder
 public class SigninResponseDto {
+
     private AccountDto account;
     private TokenDto token;
 

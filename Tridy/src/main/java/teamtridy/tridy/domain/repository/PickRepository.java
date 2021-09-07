@@ -6,5 +6,6 @@ import teamtridy.tridy.domain.entity.Pick;
 import teamtridy.tridy.domain.entity.Place;
 
 public interface PickRepository extends JpaRepository<Pick, Long> {
+
     Pick findByAccountAndPlace(Account account, Place place);
 }

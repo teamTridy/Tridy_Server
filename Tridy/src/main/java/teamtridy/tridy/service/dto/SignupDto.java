@@ -1,18 +1,18 @@
 package teamtridy.tridy.service.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import teamtridy.tridy.domain.entity.Account;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import lombok.Builder;
+import lombok.Data;
+import teamtridy.tridy.domain.entity.Account;
 
 @Data
 @Builder
 public class SignupDto {
+
     @NotEmpty
     private String socialId;
 
@@ -28,10 +28,10 @@ public class SignupDto {
 
     public Account toAccount() {
         return Account.builder()
-                .socialId(socialId)
-                .nickname(nickname)
-                .allowsLocationPermission(allowsLocationPermission)
-                .hasCompletedTesting(false)
-                .build();
+            .socialId(socialId)
+            .nickname(nickname)
+            .allowsLocationPermission(allowsLocationPermission)
+            .hasCompletedTesting(false)
+            .build();
     }
 }

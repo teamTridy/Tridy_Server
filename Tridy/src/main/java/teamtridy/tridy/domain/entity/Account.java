@@ -1,13 +1,17 @@
 package teamtridy.tridy.domain.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +28,7 @@ import java.util.List;
     출처: https://velog.io/@freddiey/JPA%EC%9D%98-DynamicUpdate
 */
 public class Account extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", nullable = false)
@@ -54,13 +59,14 @@ public class Account extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private List<Review> reviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "account")
-    private List<Pick> picks = new ArrayList<>();
+    private final List<Pick> picks = new ArrayList<>();
 
-    public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular, List<AccountInterest> newAccountInterest) {
+    public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular,
+        List<AccountInterest> newAccountInterest) {
         this.hasCompletedTesting = true;
         this.isPreferredFar = isPreferredFar;
         this.isPreferredPopular = isPreferredPopular;

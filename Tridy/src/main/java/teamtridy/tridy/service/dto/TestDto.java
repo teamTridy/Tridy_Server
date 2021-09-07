@@ -1,16 +1,16 @@
 package teamtridy.tridy.service.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
 public class TestDto {
+
     @NotNull(message = "isPreferredFar is required")
     private Boolean isPreferredFar;
 

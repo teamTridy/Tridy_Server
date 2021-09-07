@@ -1,18 +1,18 @@
 package teamtridy.tridy.dto;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import teamtridy.tridy.domain.entity.Review;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 @Data
 @Builder
 public class ReviewCreateRequestDto {
+
     @NotNull(message = "rating is required")
     @Min(1)
     @Max(5)
@@ -27,9 +27,9 @@ public class ReviewCreateRequestDto {
 
     public Review toReview() {
         return Review.builder()
-                .rating(rating)
-                .comment(comment)
-                .isPrivate(isPrivate)
-                .build();
+            .rating(rating)
+            .comment(comment)
+            .isPrivate(isPrivate)
+            .build();
     }
 }
