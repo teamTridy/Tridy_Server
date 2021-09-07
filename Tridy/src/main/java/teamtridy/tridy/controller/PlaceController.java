@@ -77,10 +77,11 @@ public class PlaceController {
     }
 
     @GetMapping("/{placeId}/reviews")
-    public ResponseEntity<ReviewDto> readAllReview(@PathVariable Long placeId,
+    public ResponseEntity<ReviewDto> readAllReview(@CurrentUser Account account,
+            @PathVariable Long placeId,
             @RequestParam(defaultValue = "9223372036854775807") Long lastReviewId, //Long.MAX_VALUE
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
-        return new ResponseEntity(placeService.readAllReview(placeId, lastReviewId, size),
+        return new ResponseEntity(placeService.readAllReview(account, placeId, lastReviewId, size),
                 HttpStatus.OK);
     }
 

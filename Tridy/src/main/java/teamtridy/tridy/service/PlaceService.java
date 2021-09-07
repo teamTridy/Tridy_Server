@@ -137,7 +137,8 @@ public class PlaceService {
     }
 
     @Transactional
-    public PlaceReviewReadAllResponseDto readAllReview(Long placeId, Long lastReviewId,
+    public PlaceReviewReadAllResponseDto readAllReview(Account account, Long placeId,
+            Long lastReviewId,
             Integer size) {
         Place place = placeRepository
                 .findById(placeId)
@@ -151,7 +152,7 @@ public class PlaceService {
                 .findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,
                         pageRequest);
         List<ReviewDto> reviewDtos = reviews.stream()
-                .map(ReviewDto::of)
+                .map(review -> ReviewDto.of(review, account))
                 .collect(Collectors.toList());
         Long newLastReviewId = reviewDtos.get(reviewDtos.size() - 1).getId();
 
@@ -189,7 +190,7 @@ public class PlaceService {
 
         review = reviewRepository.save(review);
 
-        return ReviewDto.of(review);
+        return ReviewDto.of(review, account);
     }
 
     @Transactional
@@ -208,7 +209,7 @@ public class PlaceService {
 
         reviewUpdateRequestDto.apply(review);
 
-        return ReviewDto.of(review);
+        return ReviewDto.of(review, account);
     }
 
     public void deleteReview(Account account, Long placeId, Long reviewId) {
