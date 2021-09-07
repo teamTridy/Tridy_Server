@@ -45,6 +45,7 @@ public class PlaceService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
 
+    @Transactional
     public PlaceReadAllResponseDto readAll(Account account, Integer page, Integer size,
             String query, List<Long> locationIds, List<Long> category2Ids) {
         List<Location> locations = null;
@@ -72,7 +73,7 @@ public class PlaceService {
             cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
         }
 
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
         Slice<Place> places = null;
         if (locations != null && category3s != null) {
             places = placeRepository
@@ -212,6 +213,7 @@ public class PlaceService {
         return ReviewDto.of(review, account);
     }
 
+    @Transactional
     public void deleteReview(Account account, Long placeId, Long reviewId) {
         placeRepository
                 .findById(placeId)
