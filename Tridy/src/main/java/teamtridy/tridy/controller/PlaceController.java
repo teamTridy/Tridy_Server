@@ -46,7 +46,7 @@ public class PlaceController {
             @RequestParam(required = false) List<Long> regionId,
             @RequestParam(required = false) List<Long> category2Id) {
         return ResponseEntity
-                .ok(placeService.readAll(account, page - 1, size, query, regionId, category2Id));
+                .ok(placeService.readAll(account, page, size, query, regionId, category2Id));
     }
 
     /*
