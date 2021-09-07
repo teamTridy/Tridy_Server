@@ -11,8 +11,6 @@ public class AccountDto {
 
     private Long id;
     private String nickname;
-    private Boolean allowsLocationPermission;
-
     private TestDto test;
 
     public static AccountDto of(Account account, List<InterestDto> interests) {
@@ -20,6 +18,6 @@ public class AccountDto {
                 .isPreferredFar(account.getIsPreferredFar())
                 .isPreferredPopular(account.getIsPreferredPopular()).build();
         return AccountDto.builder().id(account.getId()).nickname(account.getNickname())
-                .allowsLocationPermission(account.getAllowsLocationPermission()).test(test).build();
+                .test(test).build();
     }
 }

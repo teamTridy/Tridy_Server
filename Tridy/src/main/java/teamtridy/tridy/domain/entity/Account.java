@@ -48,8 +48,6 @@ public class Account extends BaseTimeEntity {
     @Column
     private Boolean isPreferredPopular;
     @Column(nullable = false)
-    private Boolean allowsLocationPermission;
-    @Column(nullable = false)
     private Boolean hasCompletedTesting;
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
