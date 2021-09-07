@@ -62,7 +62,7 @@ public class PlaceService {
                     .map(subCatId -> categoryRepository
                             .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
                             .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
-                    .map(Category::getChildCategories)
+                    .map(Category::getChildren)
                     .flatMap(
                             Collection::stream) //stream을 이용하여 list합치기
                     .collect(Collectors.toList());

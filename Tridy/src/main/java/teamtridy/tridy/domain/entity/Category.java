@@ -43,5 +43,5 @@ public class Category extends BaseTimeEntity {
 
     // 자식 정의
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCategory")
-    private List<Category> childCategories;
+    private List<Category> children;
 }
