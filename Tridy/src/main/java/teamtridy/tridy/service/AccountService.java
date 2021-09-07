@@ -127,6 +127,21 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
+    public AccountDto read(Account account, Long accountId) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+
+        if (account.getId() != accountId) {
+            throw new AccessDeniedException("조회 권한이 없습니다");
+        }
+
+        List<Long> interestIds = account.getAccountInterests().stream()
+                .map(accountInterest -> accountInterest.getInterest().getId())
+                .collect(Collectors.toList());
+        return AccountDto.of(account, interestIds);
+    }
+
+    @Transactional
     public AccountDto updateTendency(Account account, Long accountId,
             TendencyUpdateRequestDto tendencyUpdateRequestDto) {
         accountRepository.findById(accountId)

@@ -76,6 +76,13 @@ public class AccountController {
         return ResponseEntity.ok(accountService.signin(socialId));
     }
 
+    @GetMapping("/{accountId}")
+    public ResponseEntity<AccountDto> readAllPick(@CurrentUser Account account,
+            @PathVariable Long accountId) {
+        return ResponseEntity.ok(accountService.read(account, accountId));
+    }
+
+
     @PatchMapping("/{accountId}/tendency")
     public ResponseEntity<AccountDto> updateTendency(@CurrentUser Account account,
             @PathVariable Long accountId,
