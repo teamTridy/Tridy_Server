@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.Place;
 import teamtridy.tridy.domain.entity.Review;
 
@@ -19,4 +20,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Long countByPlace(Place place);
 
     Long countByPlaceAndRating(Place place, Integer rating);
+
+    Slice<Review> findByAccountOrderByIdDesc(Account account, Pageable pageable);
 }

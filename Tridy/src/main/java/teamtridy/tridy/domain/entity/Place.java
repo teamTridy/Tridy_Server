@@ -23,12 +23,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Place extends BaseTimeEntity {
 
-    @OneToMany(mappedBy = "place")
-    @Builder.Default
-    private List<PlaceHashtag> placeHashtag = new ArrayList<>();
-    @Builder.Default
-    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
-    private List<Review> reviews = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "place_id", nullable = false)
@@ -65,4 +59,10 @@ public class Place extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    @OneToMany(mappedBy = "place")
+    @Builder.Default
+    private List<PlaceHashtag> placeHashtag = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 }
