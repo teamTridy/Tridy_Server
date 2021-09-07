@@ -39,4 +39,5 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             List<Location> locations, Pageable pageable);
 
 
+    Slice<Place> findAllByCategoryIn(List<Category> categories, Pageable pageable);
 }

@@ -46,8 +46,8 @@ public class PlaceService {
     private final LocationRepository locationRepository;
 
     @Transactional
-    public PlaceReadAllResponseDto readAll(Account account, Integer page, Integer size,
-            String query, List<Long> locationIds, List<Long> category2Ids) {
+    public PlaceReadAllResponseDto readAllPlaceByQuery(Account account, Integer page, Integer size,
+            String query, List<Long> locationIds, List<Long> depth2CategoryIds) {
         List<Location> locations = null;
         if (locationIds != null) {
             locations = locationIds.stream()
@@ -56,9 +56,9 @@ public class PlaceService {
                     .collect(Collectors.toList());
         }
 
-        List<Category> category3s = null;
-        if (category2Ids != null) {
-            category3s = category2Ids.stream()
+        List<Category> depth3Categories = null;
+        if (depth2CategoryIds != null) {
+            depth3Categories = depth2CategoryIds.stream()
                     .map(subCatId -> categoryRepository
                             .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
                             .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
@@ -75,16 +75,17 @@ public class PlaceService {
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Slice<Place> places = null;
-        if (locations != null && category3s != null) {
+        if (locations != null && depth3Categories != null) {
             places = placeRepository
-                    .findAllByQueryAndCategoryInAndLocationIn(cleanQuery, category3s, locations,
+                    .findAllByQueryAndCategoryInAndLocationIn(cleanQuery, depth3Categories,
+                            locations,
                             pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
-        } else if (locations != null && category3s == null) {
+        } else if (depth3Categories == null) {
             places = placeRepository
                     .findAllByQueryAndLocationIn(cleanQuery, locations, pageRequest);
-        } else if (locations == null && category3s != null) {
+        } else if (locations == null) {
             places = placeRepository
-                    .findAllByQueryAndCategoryIn(cleanQuery, category3s, pageRequest);
+                    .findAllByQueryAndCategoryIn(cleanQuery, depth3Categories, pageRequest);
         } else {
             places = placeRepository.findAllByQuery(cleanQuery, pageRequest);
         }
