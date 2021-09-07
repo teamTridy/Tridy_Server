@@ -43,10 +43,11 @@ public class PlaceController {
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
             @RequestParam @Length(min = 2) String query,
-            @RequestParam(required = false) List<Long> regionId,
-            @RequestParam(required = false) List<Long> category2Id) {
+            @RequestParam(required = false) List<Long> regionIds,
+            @RequestParam(required = false) List<Long> depth2CategoryIds) {
         return ResponseEntity
-                .ok(placeService.readAll(account, page, size, query, regionId, category2Id));
+                .ok(placeService.readAllPlaceByQuery(account, page, size, query, regionIds,
+                        depth2CategoryIds));
     }
 
     /*
