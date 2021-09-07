@@ -20,13 +20,13 @@ public class SignupDto {
     private String nickname;
 
     @Valid
-    private TestDto test;
+    private TendencyDto tendency;
 
     public Account toAccount() {
         return Account.builder()
                 .socialId(socialId)
                 .nickname(nickname)
-                .hasCompletedTesting(false)
+                .hasTendency(false)
                 .build();
     }
 }

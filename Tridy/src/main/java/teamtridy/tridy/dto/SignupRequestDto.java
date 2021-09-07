@@ -6,7 +6,7 @@ import javax.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 import teamtridy.tridy.service.dto.SignupDto;
-import teamtridy.tridy.service.dto.TestDto;
+import teamtridy.tridy.service.dto.TendencyDto;
 
 @Data
 @Builder
@@ -23,13 +23,13 @@ public class SignupRequestDto {
     private String nickname;
 
     @Valid
-    private TestDto test;
+    private TendencyDto tendency;
 
     public SignupDto toServiceDto(String socialId) {
         return SignupDto.builder()
                 .socialId(socialId)
                 .nickname(nickname)
-                .test(test)
+                .tendency(tendency)
                 .build();
     }
 }

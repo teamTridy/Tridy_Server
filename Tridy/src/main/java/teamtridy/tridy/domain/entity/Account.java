@@ -48,15 +48,15 @@ public class Account extends BaseTimeEntity {
     @Column
     private Boolean isPreferredPopular;
     @Column(nullable = false)
-    private Boolean hasCompletedTesting;
+    private Boolean hasTendency;
     // !! @Builder 는 초기화 표현을 완전히 무시한다. 초기화 하고 싶으면 @Builder.Default 를 사용해. 아니면 final 쓰면돼
     @Builder.Default
     @OneToMany(mappedBy = "account", orphanRemoval = true)
     private List<AccountInterest> accountInterests = new ArrayList<>();
 
-    public void updateTestResult(Boolean isPreferredFar, Boolean isPreferredPopular,
+    public void updateTendency(Boolean isPreferredFar, Boolean isPreferredPopular,
             List<AccountInterest> newAccountInterest) {
-        this.hasCompletedTesting = true;
+        this.hasTendency = true;
         this.isPreferredFar = isPreferredFar;
         this.isPreferredPopular = isPreferredPopular;
         this.accountInterests = newAccountInterest;

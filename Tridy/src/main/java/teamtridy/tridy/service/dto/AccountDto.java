@@ -11,13 +11,13 @@ public class AccountDto {
 
     private Long id;
     private String nickname;
-    private TestDto test;
+    private TendencyDto tendency;
 
     public static AccountDto of(Account account, List<InterestDto> interests) {
-        TestDto test = TestDto.builder().interests(interests)
+        TendencyDto tendency = TendencyDto.builder().interests(interests)
                 .isPreferredFar(account.getIsPreferredFar())
                 .isPreferredPopular(account.getIsPreferredPopular()).build();
         return AccountDto.builder().id(account.getId()).nickname(account.getNickname())
-                .test(test).build();
+                .tendency(tendency).build();
     }
 }

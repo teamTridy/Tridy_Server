@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TestDto {
+public class TendencyDto {
 
     @NotNull(message = "isPreferredFar is required")
     private Boolean isPreferredFar;

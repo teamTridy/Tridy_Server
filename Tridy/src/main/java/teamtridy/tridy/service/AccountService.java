@@ -41,7 +41,7 @@ import teamtridy.tridy.service.dto.InterestDto;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
 import teamtridy.tridy.service.dto.SignupDto;
-import teamtridy.tridy.service.dto.TestDto;
+import teamtridy.tridy.service.dto.TendencyDto;
 import teamtridy.tridy.util.SecurityUtil;
 
 @Service
@@ -76,7 +76,14 @@ public class AccountService implements UserDetailsService {
         return new UserAccount(account);
     }
 
-    // 로그인
+    @Transactional
+    public Boolean isDuplicatedNickname(String nickname) {
+        if (accountRepository.existsByNickname(nickname)) {
+            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
+        }
+        return true;
+    }
+
     @Transactional
     public SigninResponseDto signin(String socialId) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
@@ -93,7 +100,7 @@ public class AccountService implements UserDetailsService {
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
-                .email(authentication.getName())
+                .accountId(authentication.getName())
                 .tokenValue(tokenDto.getRefreshToken())
                 .build();
 
@@ -111,7 +118,6 @@ public class AccountService implements UserDetailsService {
         return signinResponseDto;
     }
 
-    // 회원가입
     @Transactional
     public void signup(SignupDto signupDto) {
         if (accountRepository.existsBySocialId(signupDto.getSocialId())) {
@@ -120,10 +126,10 @@ public class AccountService implements UserDetailsService {
         Account account = signupDto.toAccount();
         accountRepository.save(account);
 
-        TestDto testDto = signupDto.getTest();
+        TendencyDto tendencyDto = signupDto.getTendency();
 
-        if (testDto != null) {
-            List<InterestDto> interestDtos = testDto.getInterests();
+        if (tendencyDto != null) {
+            List<InterestDto> interestDtos = tendencyDto.getInterests();
             List<Interest> interests = interestDtos.stream()
                     .map(interestDto -> interestRepository.findById(interestDto.getId()).get())
                     .collect(Collectors.toList());
@@ -135,17 +141,10 @@ public class AccountService implements UserDetailsService {
                     .map(accountInterest -> accountInterestRepository.save(accountInterest))
                     .collect(Collectors.toList());
 
-            account.updateTestResult(testDto.getIsPreferredFar(), testDto.getIsPreferredPopular(),
+            account.updateTendency(tendencyDto.getIsPreferredFar(),
+                    tendencyDto.getIsPreferredPopular(),
                     accountInterests);
         }
-    }
-
-    @Transactional
-    public Boolean isDuplicatedNickname(String nickname) {
-        if (accountRepository.existsByNickname(nickname)) {
-            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
-        }
-        return true;
     }
 
     @Transactional
