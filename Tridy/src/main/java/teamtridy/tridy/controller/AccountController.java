@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
+import teamtridy.tridy.dto.AccountReviewReadAllResponseDto;
 import teamtridy.tridy.dto.PickReadAllResponseDto;
 import teamtridy.tridy.dto.SigninRequestDto;
 import teamtridy.tridy.dto.SigninResponseDto;
@@ -89,4 +90,13 @@ public class AccountController {
                 .ok(accountService.readAllPick(account, accountId, page, size));
     }
 
+    @GetMapping("/{accountId}/reviews")
+    public ResponseEntity<AccountReviewReadAllResponseDto> readAllReview(
+            @CurrentUser Account account,
+            @PathVariable Long accountId,
+            @RequestParam(defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
+        return ResponseEntity
+                .ok(accountService.readAllReview(account, accountId, page, size));
+    }
 }
