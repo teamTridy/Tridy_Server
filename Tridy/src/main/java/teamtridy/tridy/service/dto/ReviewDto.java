@@ -15,6 +15,7 @@ public class ReviewDto {
     private String comment;
     private Boolean isPrivate;
     private LocalDate createdAt;
+    private String authorNickname;
     private Boolean isAuthor;
 
     public static ReviewDto of(Review review, Account account) {
@@ -24,10 +25,9 @@ public class ReviewDto {
                 .comment(review.getComment())
                 .isPrivate(review.getIsPrivate())
                 .createdAt(review.getCreatedAt().toLocalDate())
+                .authorNickname(review.getAccount().getNickname())
+                .isAuthor(review.getAccount() == account)
                 .build();
-
-        Boolean isAuthor = review.getAccount() == account;
-        reviewDto.setIsAuthor(isAuthor);
 
         return reviewDto;
     }
