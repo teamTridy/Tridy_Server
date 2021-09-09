@@ -80,10 +80,10 @@ public class PlaceService {
                     .findAllByQueryAndCategoryInAndLocationIn(cleanQuery, depth3Categories,
                             locations,
                             pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
-        } else if (depth3Categories == null) {
+        } else if (locations != null && depth3Categories == null) {
             places = placeRepository
                     .findAllByQueryAndLocationIn(cleanQuery, locations, pageRequest);
-        } else if (locations == null) {
+        } else if (locations == null && depth3Categories != null) {
             places = placeRepository
                     .findAllByQueryAndCategoryIn(cleanQuery, depth3Categories, pageRequest);
         } else {
