@@ -24,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import teamtridy.tridy.dto.ApplePublicKeyResponseDto;
+import teamtridy.tridy.service.dto.ApplePublicKeyResponseDto;
 
 // https://whitepaek.tistory.com/61
 // https://jdifm.tistory.com/19

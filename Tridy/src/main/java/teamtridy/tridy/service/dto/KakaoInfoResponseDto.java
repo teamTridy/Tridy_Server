@@ -1,4 +1,4 @@
-package teamtridy.tridy.dto;
+package teamtridy.tridy.service.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
