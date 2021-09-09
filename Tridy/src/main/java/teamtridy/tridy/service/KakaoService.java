@@ -1,5 +1,6 @@
 package teamtridy.tridy.service;
 
+import java.util.StringJoiner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -11,18 +12,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import teamtridy.tridy.dto.KakaoInfoResponseDto;
+import org.springframework.web.util.UriComponentsBuilder;
+import teamtridy.tridy.service.dto.KakaoAddressResponseDto;
+import teamtridy.tridy.service.dto.KakaoInfoResponseDto;
 
 @RequiredArgsConstructor
 @Service
 public class KakaoService {
 
+    private static final String BLANK_SPACE = " ";
     private final RestTemplate restTemplate;
-
     @Value("${social.kakao.client_id}")
     private String kakaoClientId;
     @Value("${social.kakao.url.access_token_info}")
     private String kakaoUrlAccessTokenInfo;
+
+    @Value("${address.kakao.rest_api_key}")
+    private String kakaoRestApiKey;
+    @Value("${address.kakao.url.coord2address}")
+    private String kakaCoord2addressUrl;
 
     public String getSocialId(String accessToken) {
 
@@ -52,4 +60,48 @@ public class KakaoService {
         }
         return null;
     }
+
+    public String getAddress(Double latitude, Double longitude) {
+
+        // Set header : Content-type: application/x-www-form-urlencoded
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
+
+        // set uri
+        String url = UriComponentsBuilder.fromHttpUrl(kakaCoord2addressUrl)
+                .queryParam("x", longitude) // longitude(경도)
+                .queryParam("y", latitude).toUriString(); // latitude(위도)
+
+        // Set http entity
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,
+                headers);
+
+        // Request coord2address
+        ResponseEntity<KakaoAddressResponseDto> response = restTemplate
+                .exchange(url, HttpMethod.GET, request,
+                        KakaoAddressResponseDto.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            if (response.getBody().getMeta().getTotalCount() == 1) {
+                KakaoAddressResponseDto.Document.Address address = response.getBody().getDocuments()
+                        .get(0).getAddress();
+
+            /*
+                https://ifuwanna.tistory.com/221 [IfUwanna IT]
+                StringBuffer/StringBuilder 는 가변성 가지기 때문에 .append() .delete() 등의 API를 이용하여 동일 객체내에서 문자열을 변경하는 것이 가능
+                StringBuffer는 thread-safe => 웹에 사용하기 적당
+             */
+                return new StringJoiner(BLANK_SPACE)
+                        .add(address.getRegion1depthName())
+                        .add(address.getRegion2depthName())
+                        .add(address.getRegion3depthName().split(BLANK_SPACE)[0])
+                        .toString();
+            }
+        } else {
+            throw new RuntimeException("통신 에러");
+        }
+
+        return null;
+    }
+
 }
