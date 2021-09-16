@@ -33,8 +33,9 @@ public class TourService {
     @Value("${tour.mobile_os}")
     private String tourMobileOS;
 
+    @Cacheable(value = "congestionCache", key = "#placeId")
     @SneakyThrows
-    public Integer getCongestionLevel(Long OriginContentId) {
+    public Integer getCongestionLevel(Long placeId) {
         // Set http entity
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,
@@ -42,7 +43,9 @@ public class TourService {
 
         // set uri
         // 서비스키 인코딩 오류로 인하여 UriConponentBuilder 대신 StringBuffer 사용
-        String strDate = LocalDate.now()
+        Long originContentId = placeRepository.findById(placeId).get().getOriginContentId();
+
+        String strDate = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd")); //2021-09-09 -> 20210909
 
         StringBuffer bufferedUri = new StringBuffer(
