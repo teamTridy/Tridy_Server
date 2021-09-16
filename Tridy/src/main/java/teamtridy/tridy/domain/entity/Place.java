@@ -54,8 +54,8 @@ public class Place extends BaseTimeEntity {
     @Column//(columnDefinition = "comment '큰 이미지 주소'")
     private String imgUrl; //크롤링 할 것 고려
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
+    @JoinColumn(name = "region_id")
+    private Region region;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

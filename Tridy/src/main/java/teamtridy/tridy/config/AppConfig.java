@@ -1,7 +1,11 @@
 package teamtridy.tridy.config;
 
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,4 +37,16 @@ public class AppConfig {
                 .additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
                 .build();
     }
+
+    // "" can't convert to Items error
+    //https://stackoverflow.com/questions/68015096/how-to-handle-invalidformatexception-for-empty-values-on-enumerations
+    //https://cowtowncoder.medium.com/jackson-2-12-most-wanted-4-5-cbc91c00bcd2
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.postConfigurer(objectMapper -> {
+            objectMapper.coercionConfigFor(LogicalType.POJO)
+                    .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull);
+        });
+    }
+
 }
