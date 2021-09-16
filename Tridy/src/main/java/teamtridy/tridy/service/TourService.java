@@ -68,17 +68,16 @@ public class TourService {
                 .exchange(uri, HttpMethod.GET, request,
                         TourCongestionResponseDto.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            Integer congestionLevel = response
-                    .getBody()
-                    .getResponse()
-                    .getBody()
-                    .getItems()
-                    .getItem()
-                    .getEstiDecoDivCd(); //(1:쾌적,2:여유,3:보통,4:약간혼잡,5:혼잡)
-            return congestionLevel;
+        Items items = response
+                .getBody()
+                .getResponse()
+                .getBody()
+                .getItems();
+
+        if (items != null) {
+            return items.getItem().getEstiDecoDivCd(); //(1:쾌적,2:여유,3:보통,4:약간혼잡,5:혼잡)
         } else {
-            throw new RuntimeException("통신 오류");
+            return null;
         }
     }
 }
