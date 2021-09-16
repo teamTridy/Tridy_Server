@@ -17,7 +17,6 @@ public class OpenWeatherDailyResponseDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Daily {
 
-        private Double temp;
         private List<Weather> weather;
     }
 
