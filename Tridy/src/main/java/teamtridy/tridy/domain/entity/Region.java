@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Location extends BaseTimeEntity {
+public class Region extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "location_id", nullable = false)
+    @Column(name = "region_id", nullable = false)
     private Long id;
 
     @Column(nullable = false)

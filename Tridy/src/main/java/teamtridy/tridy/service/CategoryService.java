@@ -28,7 +28,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final PlaceRepository placeRepository;
-    private final LocationRepository locationRepository;
+    private final RegionRepository regionRepository;
 
     @Transactional
     public CategoryDto readAll() {
@@ -56,17 +56,17 @@ public class CategoryService {
     public PlaceReadAllResponseDto readAllPlaceByDepth1AndQuery(Account account, Integer page,
             Integer size,
             Long depth1CategoryId,
-            String query, List<Long> locationIds, List<Long> depth3CategoryIds) {
+            String query, List<Long> regionIds, List<Long> depth3CategoryIds) {
 
         Category depth1Category = categoryRepository
                 .findById(depth1CategoryId) // foreach 는 요소를 돌면서 실행되는 최종 작업
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다."));
 
-        List<Location> locations = null;
-        if (locationIds != null) {
-            locations = locationIds.stream()
-                    .map(locationId -> locationRepository.findById(locationId)
-                            .orElseThrow(() -> new NotFoundException("존재하지 않는 지역입니다.")))
+        List<Region> regions = null;
+        if (regionIds != null) {
+            regions = regionIds.stream()
+                    .map(regionId -> regionRepository.findById(regionId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)))
                     .collect(Collectors.toList());
         }
 
@@ -91,46 +91,24 @@ public class CategoryService {
             cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
         }
 
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Slice<Place> places = null;
-        if (locations != null) {
-            places = placeRepository
-                    .findAllByQueryAndCategoryInAndLocationIn(cleanQuery, depth3Categories,
-                            locations,
-                            pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
+            if (regions != null) {
+                places = placeRepository
+                        .findAllByQueryAndCategoryInAndRegionIn(cleanQuery, depth3Categories,
+                                regions,
+                                pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
+            } else {
+                places = placeRepository
+                        .findAllByQueryAndCategoryIn(cleanQuery, depth3Categories, pageRequest);
+            }
         } else {
-            places = placeRepository
-                    .findAllByQueryAndCategoryIn(cleanQuery, depth3Categories, pageRequest);
+            if (regions != null) {
+                places = placeRepository
+                        .findAllByCategoryInAndRegionIn(depth3Categories, regions, pageRequest);
+            } else {
+                places = placeRepository
+                        .findAllByCategoryIn(depth3Categories, pageRequest);
+            }
         }
-
-        List<PlaceDto> placeDtos = places.stream()
-                .map(place -> PlaceDto.of(place, account))
-                .collect(Collectors.toList());
-
-        return PlaceReadAllResponseDto.builder()
-                .currentPage(places.getNumber() + 1)
-                .currentSize(places.getNumberOfElements())
-                .hasNextPage(places.hasNext())
-                .places(placeDtos).build();
-    }
-
-    @Transactional
-    public PlaceReadAllResponseDto readAllPlaceByDepth1(Account account, Integer page, Integer size,
-            Long depth1CategoryId) {
-
-        Category depth1Category = categoryRepository
-                .findById(depth1CategoryId) // foreach 는 요소를 돌면서 실행되는 최종 작업
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다."));
-
-        List<Category> depth3Categories = depth1Category.getChildren().stream() //depth2Categories
-                .map(Category::getChildren) //depth3Categories
-                .flatMap(
-                        Collection::stream)
-                .collect(Collectors.toList());
-
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Slice<Place> places = placeRepository
-                .findAllByCategoryIn(depth3Categories, pageRequest);
 
         List<PlaceDto> placeDtos = places.stream()
                 .map(place -> PlaceDto.of(place, account))

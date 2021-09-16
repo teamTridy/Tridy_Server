@@ -43,16 +43,16 @@ public class PlaceService {
     private final PickRepository pickRepository;
     private final ReviewRepository reviewRepository;
     private final CategoryRepository categoryRepository;
-    private final LocationRepository locationRepository;
+    private final RegionRepository regionRepository;
 
     @Transactional
     public PlaceReadAllResponseDto readAllPlaceByQuery(Account account, Integer page, Integer size,
-            String query, List<Long> locationIds, List<Long> depth2CategoryIds) {
-        List<Location> locations = null;
-        if (locationIds != null) {
-            locations = locationIds.stream()
-                    .map(locationId -> locationRepository.findById(locationId)
-                            .orElseThrow(() -> new NotFoundException("존재하지 않는 지역입니다.")))
+            String query, List<Long> regionIds, List<Long> depth2CategoryIds) {
+        List<Region> regions = null;
+        if (regionIds != null) {
+            regions = regionIds.stream()
+                    .map(regionId -> regionRepository.findById(regionId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)))
                     .collect(Collectors.toList());
         }
 
@@ -75,15 +75,15 @@ public class PlaceService {
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Slice<Place> places = null;
-        if (locations != null && depth3Categories != null) {
+        if (regions != null && depth3Categories != null) {
             places = placeRepository
-                    .findAllByQueryAndCategoryInAndLocationIn(cleanQuery, depth3Categories,
-                            locations,
+                    .findAllByQueryAndCategoryInAndRegionIn(cleanQuery, depth3Categories,
+                            regions,
                             pageRequest); // 검색할 때 in으로 해서 자식카테고리에 해당하는 장소들 모두 가져오기
-        } else if (locations != null && depth3Categories == null) {
+        } else if (regions != null && depth3Categories == null) {
             places = placeRepository
-                    .findAllByQueryAndLocationIn(cleanQuery, locations, pageRequest);
-        } else if (locations == null && depth3Categories != null) {
+                    .findAllByQueryAndRegionIn(cleanQuery, regions, pageRequest);
+        } else if (regions == null && depth3Categories != null) {
             places = placeRepository
                     .findAllByQueryAndCategoryIn(cleanQuery, depth3Categories, pageRequest);
         } else {
