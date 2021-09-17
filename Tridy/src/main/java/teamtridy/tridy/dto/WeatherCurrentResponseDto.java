@@ -10,8 +10,6 @@ public class WeatherCurrentResponseDto {
 
     private LocalDateTime time;
     private String address;
-    private Double latitude;
-    private Double longitude;
     private Integer temp;
     private String description;
 }
