@@ -16,7 +16,7 @@ import teamtridy.tridy.service.OpenWeatherService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/weather")
+@RequestMapping("/api/v1/weathers")
 @Validated
 @Slf4j
 public class WeatherController {
