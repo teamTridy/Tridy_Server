@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import teamtridy.tridy.error.ExternalException;
 import teamtridy.tridy.service.dto.KakaoAddressResponseDto;
 import teamtridy.tridy.service.dto.KakaoInfoResponseDto;
 
@@ -50,15 +50,17 @@ public class KakaoService {
             getForObject는 응답을 Response DTO에 직접 매핑 할 수도 있습니다.
          */
 
+        ResponseEntity<KakaoInfoResponseDto> response;
         // Request access token info
-        ResponseEntity<KakaoInfoResponseDto> response = restTemplate
-                .exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request,
-                        KakaoInfoResponseDto.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody().getId().toString();
+        try {
+            response = restTemplate
+                    .exchange(kakaoUrlAccessTokenInfo, HttpMethod.GET, request,
+                            KakaoInfoResponseDto.class);
+        } catch (Exception e) {
+            throw new ExternalException(e); // http status != 2xx
         }
-        return null;
+
+        return response.getBody().getId().toString();
     }
 
     public String getAddress(Double latitude, Double longitude) {
@@ -76,31 +78,30 @@ public class KakaoService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,
                 headers);
 
-        // Request coord2address
-        ResponseEntity<KakaoAddressResponseDto> response = restTemplate
-                .exchange(url, HttpMethod.GET, request,
-                        KakaoAddressResponseDto.class);
+        ResponseEntity<KakaoAddressResponseDto> response;
+        try {
+            // Request coord2address
+            response = restTemplate.exchange(url, HttpMethod.GET, request,
+                    KakaoAddressResponseDto.class);
+        } catch (Exception e) {
+            throw new ExternalException(e); // http status != 2xx
+        }
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            if (response.getBody().getMeta().getTotalCount() == 1) {
-                KakaoAddressResponseDto.Document.Address address = response.getBody().getDocuments()
-                        .get(0).getAddress();
+        if (response.getBody().getMeta().getTotalCount() == 1) {
+            KakaoAddressResponseDto.Document.Address address = response.getBody().getDocuments()
+                    .get(0).getAddress();
 
             /*
                 https://ifuwanna.tistory.com/221 [IfUwanna IT]
                 StringBuffer/StringBuilder 는 가변성 가지기 때문에 .append() .delete() 등의 API를 이용하여 동일 객체내에서 문자열을 변경하는 것이 가능
                 StringBuffer는 thread-safe => 웹에 사용하기 적당
              */
-                return new StringJoiner(BLANK_SPACE)
-                        .add(address.getRegion1depthName())
-                        .add(address.getRegion2depthName())
-                        .add(address.getRegion3depthName().split(BLANK_SPACE)[0])
-                        .toString();
-            }
-        } else {
-            throw new RuntimeException("통신 에러");
+            return new StringJoiner(BLANK_SPACE)
+                    .add(address.getRegion1depthName())
+                    .add(address.getRegion2depthName())
+                    .add(address.getRegion3depthName().split(BLANK_SPACE)[0])
+                    .toString();
         }
-
         return null;
     }
 

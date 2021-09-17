@@ -1,6 +1,5 @@
 package teamtridy.tridy.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,9 +7,7 @@ import io.jsonwebtoken.Jwts;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Map;
@@ -19,11 +16,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
+import teamtridy.tridy.error.ExternalException;
 import teamtridy.tridy.service.dto.ApplePublicKeyResponseDto;
 
 // https://whitepaek.tistory.com/61
@@ -71,53 +70,50 @@ public class AppleService {
                         .toString(); //Since this token is meant for your application, the value is the unique identifier for the user.
             }
         } catch (ExpiredJwtException e) { //시간이 exp토큰 값 보다 빠른지 확인합니다.
-            throw e;
+            throw new CustomException(ErrorCode.EXPIRED_SOCIAL_TOKEN);
+        } catch (Exception e) {
+            throw new ExternalException(e);
         }
         return null;
     }
 
 
     private PublicKey getPublicKey(String idToken) {
+        ResponseEntity<ApplePublicKeyResponseDto> response;
+
         try {
             HttpHeaders headers = new HttpHeaders();
-
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
-            ResponseEntity<ApplePublicKeyResponseDto> response = restTemplate
+            response = restTemplate
                     .exchange(appleUrlPublicKeys, HttpMethod.GET, request,
                             ApplePublicKeyResponseDto.class);
 
-            if (response.getStatusCode() == HttpStatus.OK) {
-                //get jwt token header
-                String headerOfIdentityToken = idToken.substring(0, idToken.indexOf(
-                        ".")); //jwt은 우선  header와 payload, signature로 구성되어있습니다. header에는 kid(key ID), alg(알고리즘 유형)으로 구성되어있고 payload는 전달하고자 하는 정보들이 담겨있습니다. signature는 header와 payload를 비밀키와 header에 있는 알고리즘 유형으로 암호화한 정보입니다.
-                Map<String, String> header = new ObjectMapper().readValue(
-                        new String(Base64.getDecoder().decode(headerOfIdentityToken),
-                                StandardCharsets.UTF_8),
-                        Map.class);
+            //get jwt token header
+            String headerOfIdentityToken = idToken.substring(0, idToken.indexOf(
+                    ".")); //jwt은 우선  header와 payload, signature로 구성되어있습니다. header에는 kid(key ID), alg(알고리즘 유형)으로 구성되어있고 payload는 전달하고자 하는 정보들이 담겨있습니다. signature는 header와 payload를 비밀키와 header에 있는 알고리즘 유형으로 암호화한 정보입니다.
+            Map<String, String> header = new ObjectMapper().readValue(
+                    new String(Base64.getDecoder().decode(headerOfIdentityToken),
+                            StandardCharsets.UTF_8),
+                    Map.class);
 
-                //identify token의 kid와 alg가 일치하는 public key 얻기
-                ApplePublicKeyResponseDto.Key key = response.getBody()
-                        .getMatchedKeyBy(header.get("kid"), header.get("alg"))
-                        .orElseThrow(() -> new NullPointerException(
-                                "Failed get public key from apple's id server."));
+            //identify token의 kid와 alg가 일치하는 public key 얻기
+            ApplePublicKeyResponseDto.Key key = response.getBody()
+                    .getMatchedKeyBy(header.get("kid"), header.get("alg"))
+                    .orElseThrow(() -> new NullPointerException(
+                            "Failed get public key from apple's id server."));
 
-                byte[] nBytes = Base64.getUrlDecoder().decode(key.getN());
-                byte[] eBytes = Base64.getUrlDecoder().decode(key.getE());
-                BigInteger n = new BigInteger(1, nBytes);
-                BigInteger e = new BigInteger(1, eBytes);
-                RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
-                KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
-                PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+            byte[] nBytes = Base64.getUrlDecoder().decode(key.getN());
+            byte[] eBytes = Base64.getUrlDecoder().decode(key.getE());
+            BigInteger n = new BigInteger(1, nBytes);
+            BigInteger e = new BigInteger(1, eBytes);
+            RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+            KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-                return publicKey;
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
+            return publicKey;
+
+        } catch (Exception e) {
+            throw new ExternalException(e);
         }
-        return null;
     }
 }

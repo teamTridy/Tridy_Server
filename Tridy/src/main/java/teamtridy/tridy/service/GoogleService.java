@@ -7,12 +7,13 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
+import teamtridy.tridy.error.ExternalException;
 
 @RequiredArgsConstructor
 @Service
@@ -22,9 +23,10 @@ public class GoogleService {
     private String googleClientId;
 
     public String getSocialId(String idToken) {
-        HttpTransport httpTransport = null;
+        GoogleIdToken verifiedIdToken = null;
+
         try {
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport,
@@ -33,20 +35,19 @@ public class GoogleService {
                             googleClientId))  // Specify the CLIENT_ID of the app that accesses the backend:
                     .build();
 
-            GoogleIdToken verifiedIdToken = null; // (Receive idTokenString by HTTPS POST)
-
+            // (Receive idTokenString by HTTPS POST)
             verifiedIdToken = verifier.verify(idToken);
-
-            if (verifiedIdToken != null) {
-                Payload payload = verifiedIdToken.getPayload();
-                String socialId = payload.getSubject();
-                return socialId;
-            }
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new ExternalException(e); // http status != 2xx
         }
-        return null;
+
+        if (verifiedIdToken != null) {
+            Payload payload = verifiedIdToken.getPayload();
+            String socialId = payload.getSubject();
+            return socialId;
+        } else {
+            throw new CustomException(ErrorCode.INVALID_SOCIAL_TOKEN);
+        }
+
     }
 }
