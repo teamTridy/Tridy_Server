@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,11 +33,13 @@ public class CategoryService {
     private final RegionRepository regionRepository;
 
     @Transactional
+    @Cacheable(value = "categoryReadAllCache")
     public CategoryDto readAll() {
         Category category = categoryRepository.findByDepth(0);
         return CategoryDto.ofContainSetChildren(category); // Dto 내부에서 자식을 설정함 -> 재귀적으로 자식의 자식까지 설정됨
     }
 
+    @Cacheable(value = "categoryReadCache", key = "#categoryId")
     @Transactional
     public CategoryDto read(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)

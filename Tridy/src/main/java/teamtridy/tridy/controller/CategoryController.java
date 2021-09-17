@@ -43,13 +43,13 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.read(categoryId));
     }
 
-    @GetMapping("/{depth1CategoryId}/places/search")
+    @GetMapping("/{depth1CategoryId}/places")
     public ResponseEntity<PlaceReadAllResponseDto> readAllPlaceByDepth1AndQuery(
             @CurrentUser Account account,
             @PathVariable Long depth1CategoryId,
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
-            @RequestParam @Length(min = 2) String query,
+            @RequestParam(required = false) @Length(min = 2) String query,
             @RequestParam(required = false) List<Long> regionIds,
             @RequestParam(required = false) List<Long> depth3CategoryIds) {
         return ResponseEntity
@@ -57,17 +57,5 @@ public class CategoryController {
                         size,
                         depth1CategoryId,
                         query, regionIds, depth3CategoryIds));
-    }
-
-    @GetMapping("/{depth1CategoryId}/places")
-    public ResponseEntity<PlaceReadAllResponseDto> readAllPlaceByDepth1(
-            @CurrentUser Account account,
-            @PathVariable Long depth1CategoryId,
-            @RequestParam(defaultValue = "1") @Min(1) Integer page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
-        return ResponseEntity
-                .ok(categoryService.readAllPlaceByDepth1(account, page,
-                        size,
-                        depth1CategoryId));
     }
 }
