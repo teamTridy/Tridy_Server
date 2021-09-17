@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -35,8 +34,8 @@ import teamtridy.tridy.dto.PickReadAllResponseDto;
 import teamtridy.tridy.dto.SigninResponseDto;
 import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.dto.TokenDto;
-import teamtridy.tridy.exception.AlreadyExistsException;
-import teamtridy.tridy.exception.NotFoundException;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.dto.AccountDto;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
@@ -78,7 +77,7 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public Boolean isDuplicatedNickname(String nickname) {
         if (accountRepository.existsByNickname(nickname)) {
-            throw new AlreadyExistsException("이미 존재하는 닉네임 입니다.");
+            throw new CustomException(ErrorCode.NICKNAME_DUPLICATION);
         }
         return true;
     }
@@ -120,7 +119,7 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public void signup(SignupDto signupDto) {
         if (accountRepository.existsBySocialId(signupDto.getSocialId())) {
-            throw new AlreadyExistsException("이미 가입되어 있는 유저입니다");
+            throw new CustomException(ErrorCode.ACCOUNT_DUPLICATION);
         }
         Account account = signupDto.toAccount();
         accountRepository.save(account);
@@ -129,10 +128,10 @@ public class AccountService implements UserDetailsService {
     @Transactional
     public AccountDto read(Account account, Long accountId) {
         accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         if (account.getId() != accountId) {
-            throw new AccessDeniedException("조회 권한이 없습니다");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         List<Long> interestIds = account.getAccountInterests().stream()
@@ -145,15 +144,15 @@ public class AccountService implements UserDetailsService {
     public AccountDto updateTendency(Account account, Long accountId,
             TendencyUpdateRequestDto tendencyUpdateRequestDto) {
         accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         if (account.getId() != accountId) {
-            throw new AccessDeniedException("수정 권한이 없습니다");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         List<Interest> interests = tendencyUpdateRequestDto.getInterestIds().stream()
                 .map(interestId -> interestRepository.findById(interestId)
-                        .orElseThrow(() -> new NotFoundException("존재하지 않는 관심활동입니다.")))
+                        .orElseThrow(() -> new CustomException(ErrorCode.INTEREST_NOT_FOUND)))
                 .collect(Collectors.toList());
 
         List<AccountInterest> accountInterests = interests.stream().map(
@@ -173,10 +172,10 @@ public class AccountService implements UserDetailsService {
             Integer page,
             Integer size) {
         accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         if (account.getId() != accountId) {
-            throw new AccessDeniedException("조회 권한이 없습니다");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);
@@ -200,10 +199,10 @@ public class AccountService implements UserDetailsService {
             Integer page,
             Integer size) {
         accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         if (account.getId() != accountId) {
-            throw new AccessDeniedException("조회 권한이 없습니다");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);

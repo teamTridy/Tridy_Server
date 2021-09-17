@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.Category;
-import teamtridy.tridy.domain.entity.Location;
 import teamtridy.tridy.domain.entity.Place;
+import teamtridy.tridy.domain.entity.Region;
 import teamtridy.tridy.domain.repository.CategoryRepository;
-import teamtridy.tridy.domain.repository.LocationRepository;
 import teamtridy.tridy.domain.repository.PlaceRepository;
+import teamtridy.tridy.domain.repository.RegionRepository;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
-import teamtridy.tridy.exception.NotFoundException;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.dto.CategoryDto;
 import teamtridy.tridy.service.dto.PlaceDto;
 
@@ -39,7 +40,7 @@ public class CategoryService {
     @Transactional
     public CategoryDto read(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
         CategoryDto categoryDto = CategoryDto.of(category); // 자식은 설정하지 않음. 자신만 설정함.
 
@@ -60,7 +61,7 @@ public class CategoryService {
 
         Category depth1Category = categoryRepository
                 .findById(depth1CategoryId) // foreach 는 요소를 돌면서 실행되는 최종 작업
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
         List<Region> regions = null;
         if (regionIds != null) {
@@ -70,13 +71,12 @@ public class CategoryService {
                     .collect(Collectors.toList());
         }
 
-        List<Category> depth3Categories = null;
-
+        List<Category> depth3Categories;
         if (depth3CategoryIds != null) { //필터링할 최하위 카테고리 ID 값이 들어왔으면
             depth3Categories = depth3CategoryIds.stream()
                     .map(subCatId -> categoryRepository
                             .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
-                            .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
+                            .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
                     .collect(Collectors.toList());
         } else {
             depth3Categories = depth1Category.getChildren().stream() //depth2Categories
@@ -86,10 +86,11 @@ public class CategoryService {
                     .collect(Collectors.toList());
         }
 
-        String cleanQuery = null;
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Slice<Place> places;
+
         if (query != null) {
-            cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
-        }
+            String cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
 
             if (regions != null) {
                 places = placeRepository
