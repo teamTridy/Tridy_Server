@@ -62,7 +62,7 @@ public class AccountController {
     public ResponseEntity isDuplicatedNickname(
             @RequestParam String nickname) { //(required = true) true
         accountService.isDuplicatedNickname(nickname);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/signin")
@@ -71,7 +71,7 @@ public class AccountController {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
-        return ResponseEntity.ok(accountService.signin(socialId));
+        return new ResponseEntity(accountService.signin(socialId), HttpStatus.OK);
     }
 
     @PostMapping("/signup")
@@ -81,13 +81,13 @@ public class AccountController {
         String socialToken = signupRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken);
         accountService.signup(signupRequestDto.toServiceDto(socialId));
-        return ResponseEntity.ok(accountService.signin(socialId));
+        return new ResponseEntity(accountService.signin(socialId), HttpStatus.CREATED);
     }
 
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountDto> read(@CurrentUser Account account,
             @PathVariable Long accountId) {
-        return ResponseEntity.ok(accountService.read(account, accountId));
+        return new ResponseEntity(accountService.read(account, accountId), HttpStatus.OK);
     }
 
 
@@ -95,8 +95,9 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateTendency(@CurrentUser Account account,
             @PathVariable Long accountId,
             @Valid @RequestBody TendencyUpdateRequestDto tendencyUpdateRequestDto) {
-        return ResponseEntity
-                .ok(accountService.updateTendency(account, accountId, tendencyUpdateRequestDto));
+        return new ResponseEntity(
+                accountService.updateTendency(account, accountId, tendencyUpdateRequestDto),
+                HttpStatus.OK);
     }
 
 
@@ -105,8 +106,8 @@ public class AccountController {
             @PathVariable Long accountId,
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
-        return ResponseEntity
-                .ok(accountService.readAllPick(account, accountId, page, size));
+        return new ResponseEntity(accountService.readAllPick(account, accountId, page, size),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{accountId}/reviews")
@@ -115,7 +116,7 @@ public class AccountController {
             @PathVariable Long accountId,
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
-        return ResponseEntity
-                .ok(accountService.readAllReview(account, accountId, page, size));
+        return new ResponseEntity(accountService.readAllReview(account, accountId, page, size),
+                HttpStatus.OK);
     }
 }

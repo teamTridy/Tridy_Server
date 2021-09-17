@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +41,7 @@ public class CategoryController {
     */
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> read(@PathVariable("id") Long categoryId) {
-        return ResponseEntity.ok(categoryService.read(categoryId));
+        return new ResponseEntity(categoryService.read(categoryId), HttpStatus.OK);
     }
 
     @GetMapping("/{depth1CategoryId}/places")
@@ -52,10 +53,9 @@ public class CategoryController {
             @RequestParam(required = false) @Length(min = 2) String query,
             @RequestParam(required = false) List<Long> regionIds,
             @RequestParam(required = false) List<Long> depth3CategoryIds) {
-        return ResponseEntity
-                .ok(categoryService.readAllPlaceByDepth1AndQuery(account, page,
-                        size,
-                        depth1CategoryId,
-                        query, regionIds, depth3CategoryIds));
+        return new ResponseEntity(categoryService.readAllPlaceByDepth1AndQuery(account, page,
+                size,
+                depth1CategoryId,
+                query, regionIds, depth3CategoryIds), HttpStatus.OK);
     }
 }

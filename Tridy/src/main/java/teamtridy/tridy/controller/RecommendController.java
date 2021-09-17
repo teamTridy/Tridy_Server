@@ -78,7 +78,7 @@ public class RecommendController {
 
         return new ResponseEntity(recommendService
                 .createMain(account, latitude, longitude, address, shouldBeIndoorsToday),
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
 
     @GetMapping("/interest")

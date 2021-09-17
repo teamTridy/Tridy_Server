@@ -67,7 +67,7 @@ public class PlaceController {
     @PostMapping("/{placeId}/picks")
     public ResponseEntity createPick(@CurrentUser Account account, @PathVariable Long placeId) {
         placeService.createPick(account, placeId);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 
