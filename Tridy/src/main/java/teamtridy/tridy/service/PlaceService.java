@@ -10,27 +10,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.Category;
-import teamtridy.tridy.domain.entity.Location;
 import teamtridy.tridy.domain.entity.Pick;
 import teamtridy.tridy.domain.entity.Place;
+import teamtridy.tridy.domain.entity.Region;
 import teamtridy.tridy.domain.entity.Review;
 import teamtridy.tridy.domain.repository.CategoryRepository;
-import teamtridy.tridy.domain.repository.LocationRepository;
 import teamtridy.tridy.domain.repository.PickRepository;
 import teamtridy.tridy.domain.repository.PlaceRepository;
+import teamtridy.tridy.domain.repository.RegionRepository;
 import teamtridy.tridy.domain.repository.ReviewRepository;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
 import teamtridy.tridy.dto.PlaceReadResponseDto;
 import teamtridy.tridy.dto.PlaceReviewReadAllResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
-import teamtridy.tridy.exception.AlreadyExistsException;
-import teamtridy.tridy.exception.NotFoundException;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.dto.PlaceDto;
 import teamtridy.tridy.service.dto.ReviewDto;
 
@@ -61,7 +60,7 @@ public class PlaceService {
             depth3Categories = depth2CategoryIds.stream()
                     .map(subCatId -> categoryRepository
                             .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
-                            .orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다.")))
+                            .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
                     .map(Category::getChildren)
                     .flatMap(
                             Collection::stream) //stream을 이용하여 list합치기
@@ -106,7 +105,7 @@ public class PlaceService {
     public PlaceReadResponseDto read(Account account, Long placeId) {
         Place place = placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
         return PlaceReadResponseDto.of(place, account);
     }
 
@@ -114,10 +113,10 @@ public class PlaceService {
     public void createPick(Account account, Long placeId) {
         Place place = placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         if (pickRepository.findByAccountAndPlace(account, place) != null) {
-            throw new AlreadyExistsException("이미 찜한 장소입니다.");
+            throw new CustomException(ErrorCode.PICK_DUPLICATION);
         }
 
         Pick pick = Pick.builder().place(place).account(account).build();
@@ -128,11 +127,11 @@ public class PlaceService {
     public void deletePick(Account account, Long placeId) {
         Place place = placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         Pick pick = pickRepository.findByAccountAndPlace(account, place);
         if (pick == null) {
-            throw new NotFoundException("찜한 장소가 아닙니다.");
+            throw new CustomException(ErrorCode.PICK_NOT_FOUND);
         }
 
         pickRepository.delete(pick);
@@ -144,7 +143,7 @@ public class PlaceService {
             Integer size) {
         Place place = placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         PageRequest pageRequest = PageRequest.of(0, size);
 
@@ -184,7 +183,7 @@ public class PlaceService {
             ReviewCreateRequestDto reviewCreateRequestDto) {
         Place place = placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         Review review = reviewCreateRequestDto.toReview();
         review.setAccount(account);
@@ -200,13 +199,13 @@ public class PlaceService {
             ReviewUpdateRequestDto reviewUpdateRequestDto) {
         placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         if (review.getAccount().getId() != account.getId()) {
-            throw new AccessDeniedException("수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         reviewUpdateRequestDto.apply(review);
@@ -218,13 +217,13 @@ public class PlaceService {
     public void deleteReview(Account account, Long placeId, Long reviewId) {
         placeRepository
                 .findById(placeId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 장소 입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 리뷰입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         if (review.getAccount().getId() != account.getId()) {
-            throw new AccessDeniedException("삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         reviewRepository.delete(review);
