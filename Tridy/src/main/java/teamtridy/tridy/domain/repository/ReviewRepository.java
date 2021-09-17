@@ -14,12 +14,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             Boolean isPrivate,
             Pageable pageable); //findByIdLessThan : lastArticleId보다 작은 값의 id 중에서 게시물을 가져온다.
 
-    @Query("SELECT ROUND(AVG(r.rating),1) FROM Review r WHERE r.place = :place")
-    Float getRatingAverage(Place place);
+    @Query("SELECT ROUND(AVG(r.rating),1) FROM Review r WHERE r.place = :place and r.isPrivate = :isPrivate")
+    Float getRatingAverageAndIsPrivate(Place place, Boolean isPrivate);
 
-    Long countByPlace(Place place);
+    Long countByPlaceAndIsPrivate(Place place, Boolean isPrivate);
 
-    Long countByPlaceAndRating(Place place, Integer rating);
+    Long countByPlaceAndIsPrivateAndRating(Place place, Boolean isPrivate, Integer rating);
 
     Slice<Review> findByAccountOrderByIdDesc(Account account, Pageable pageable);
 }
