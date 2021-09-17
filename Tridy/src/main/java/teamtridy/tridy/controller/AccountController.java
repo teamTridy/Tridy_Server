@@ -57,6 +57,14 @@ public class AccountController {
         return socialId;
     }
 
+
+    @GetMapping("/duplicate/nickname")
+    public ResponseEntity isDuplicatedNickname(
+            @RequestParam String nickname) { //(required = true) true
+        accountService.isDuplicatedNickname(nickname);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<SigninResponseDto> login(
             @Valid @RequestBody SigninRequestDto signinRequestDto) {
@@ -77,7 +85,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<AccountDto> readAllPick(@CurrentUser Account account,
+    public ResponseEntity<AccountDto> read(@CurrentUser Account account,
             @PathVariable Long accountId) {
         return ResponseEntity.ok(accountService.read(account, accountId));
     }
@@ -89,14 +97,6 @@ public class AccountController {
             @Valid @RequestBody TendencyUpdateRequestDto tendencyUpdateRequestDto) {
         return ResponseEntity
                 .ok(accountService.updateTendency(account, accountId, tendencyUpdateRequestDto));
-    }
-
-
-    @GetMapping("/duplicate/nickname")
-    public ResponseEntity isDuplicatedNickname(
-            @RequestParam String nickname) { //(required = true) true
-        accountService.isDuplicatedNickname(nickname);
-        return new ResponseEntity(HttpStatus.OK);
     }
 
 
