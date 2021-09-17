@@ -148,34 +148,50 @@ public class PlaceService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         // get review info
-        Long reviewTotalCount = reviewRepository.countByPlace(place);
-        Slice<Review> reviews = reviewRepository
-                .findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,
-                        pageRequest);
-        List<ReviewDto> reviewDtos = reviews.stream()
-                .map(review -> ReviewDto.of(review, account))
-                .collect(Collectors.toList());
-        Long newLastReviewId = reviewDtos.get(reviewDtos.size() - 1).getId();
+        Long reviewTotalCount = reviewRepository.countByPlaceAndIsPrivate(place, false);
 
-        // get rating info
-        Float ratingAverage = reviewRepository.getRatingAverage(place);
-        ArrayList<Integer> ratings = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
-        List<Float> ratingRatios = ratings.stream()
-                .map(rating -> reviewRepository.countByPlaceAndRating(place, rating))
-                .map(count -> Math.round(count / (float) reviewTotalCount * 100)
-                        / (float) 100.0)//소수점 둘째자리까지 남기기
-                .collect(Collectors.toList());
+        if (reviewTotalCount != 0) {
+            Slice<Review> reviews = reviewRepository
+                    .findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,
+                            pageRequest);
 
-        return PlaceReviewReadAllResponseDto
-                .builder()
-                .lastReviewId(newLastReviewId)
-                .currentSize(reviews.getNumberOfElements())
-                .hasNextPage(reviews.hasNext())
-                .ratingAverage(ratingAverage)
-                .ratingRatios(ratingRatios)
-                .reviewTotalCount(reviewTotalCount)
-                .reviews(reviewDtos)
-                .build();
+            List<ReviewDto> reviewDtos = reviews.stream()
+                    .map(review -> ReviewDto.of(review, account))
+                    .collect(Collectors.toList());
+            Long newLastReviewId = reviewDtos.get(reviewDtos.size() - 1).getId();
+
+            // get rating info
+            Float ratingAverage = reviewRepository.getRatingAverageAndIsPrivate(place, false);
+            ArrayList<Integer> ratings = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+            List<Float> ratingRatios = ratings.stream()
+                    .map(rating -> reviewRepository
+                            .countByPlaceAndIsPrivateAndRating(place, false, rating))
+                    .map(count -> Math.round(count / (float) reviewTotalCount * 100)
+                            / (float) 100.0)//소수점 둘째자리까지 남기기
+                    .collect(Collectors.toList());
+
+            return PlaceReviewReadAllResponseDto
+                    .builder()
+                    .lastReviewId(newLastReviewId)
+                    .currentSize(reviews.getNumberOfElements())
+                    .hasNextPage(reviews.hasNext())
+                    .ratingAverage(ratingAverage)
+                    .ratingRatios(ratingRatios)
+                    .reviewTotalCount(reviewTotalCount)
+                    .reviews(reviewDtos)
+                    .build();
+        } else {
+            return PlaceReviewReadAllResponseDto
+                    .builder()
+                    .lastReviewId(-1L)
+                    .currentSize(0)
+                    .hasNextPage(false)
+                    .ratingAverage(0f)
+                    .ratingRatios(Arrays.asList(0f, 0f, 0f, 0f, 0f))
+                    .reviewTotalCount(0L)
+                    .reviews(Arrays.asList())
+                    .build();
+        }
     }
 
     @Transactional
