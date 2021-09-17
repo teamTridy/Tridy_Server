@@ -14,10 +14,16 @@ public class AccountDto {
     private TendencyDto tendency;
 
     public static AccountDto of(Account account, List<Long> interestIds) {
-        TendencyDto tendency = TendencyDto.builder().interestIds(interestIds)
-                .isPreferredFar(account.getIsPreferredFar())
-                .isPreferredPopular(account.getIsPreferredPopular()).build();
-        return AccountDto.builder().id(account.getId()).nickname(account.getNickname())
-                .tendency(tendency).build();
+        AccountDto accountDto = AccountDto.builder().id(account.getId())
+                .nickname(account.getNickname())
+                .build();
+
+        if (account.getHasTendency()) {
+            TendencyDto tendency = TendencyDto.builder().interestIds(interestIds)
+                    .isPreferredFar(account.getIsPreferredFar())
+                    .isPreferredPopular(account.getIsPreferredPopular()).build();
+            accountDto.setTendency(tendency);
+        }
+        return accountDto;
     }
 }
