@@ -121,6 +121,9 @@ public class AccountService implements UserDetailsService {
         if (accountRepository.existsBySocialId(signupDto.getSocialId())) {
             throw new CustomException(ErrorCode.ACCOUNT_DUPLICATION);
         }
+
+        isDuplicatedNickname(signupDto.getNickname());
+
         Account account = signupDto.toAccount();
         accountRepository.save(account);
     }
