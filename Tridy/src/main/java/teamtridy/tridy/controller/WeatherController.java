@@ -21,12 +21,15 @@ import teamtridy.tridy.service.OpenWeatherService;
 @Slf4j
 public class WeatherController {
 
+    private static final String STR_JEJU_AIRPORT_LATITUDE = "33.5072404";
+    private static final String STR_JEJU_AIRPORT_LONGITUDE = "126.4924838";
     private final OpenWeatherService openWeatherService;
     private final KakaoService kakaoService;
 
     @GetMapping("/current")
-    public ResponseEntity<WeatherCurrentResponseDto> current(@RequestParam Double latitude,
-            @RequestParam Double longitude) {
+    public ResponseEntity<WeatherCurrentResponseDto> current(
+            @RequestParam(required = false, defaultValue = STR_JEJU_AIRPORT_LATITUDE) Double latitude,
+            @RequestParam(required = false, defaultValue = STR_JEJU_AIRPORT_LONGITUDE) Double longitude) {
         String address = kakaoService.getAddress(latitude, longitude);
         return new ResponseEntity(
                 openWeatherService.getCurrentWeather(latitude, longitude, address),

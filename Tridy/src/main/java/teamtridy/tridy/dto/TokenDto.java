@@ -9,9 +9,14 @@ import lombok.Data;
 @Builder
 public class TokenDto {
 
-    private String grantType;
+    private String tokenType;
     private String accessToken;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date accessTokenExpiresIn;
     private String refreshToken;
+
+    @Override
+    public String toString() {
+        return "Token";
+    }
 }

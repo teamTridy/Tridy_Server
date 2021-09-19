@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin",
                         "/api/v1/accounts/duplicate/nickname",
-                        "/api/docs").permitAll()
+                        "/docs/**").permitAll()
                 .anyRequest().authenticated();
         http.cors()
                 .disable();
