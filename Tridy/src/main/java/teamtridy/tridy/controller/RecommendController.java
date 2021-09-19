@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
+import teamtridy.tridy.dto.InterestRecommendReadResponseDto;
 import teamtridy.tridy.dto.MainRecommendCreateRequestDto;
 import teamtridy.tridy.dto.MainRecommendReadResponseDto;
 import teamtridy.tridy.error.CustomException;
@@ -39,7 +40,7 @@ public class RecommendController {
     private final KakaoService kakaoService;
     private final RecommendService recommendService;
 
-    @GetMapping("/main")
+    @GetMapping("/mains")
     public ResponseEntity<MainRecommendReadResponseDto> readMain(
             @CurrentUser Account account,
             @PathVariable Long accountId,
@@ -57,7 +58,7 @@ public class RecommendController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/main")
+    @PostMapping("/mains")
     public ResponseEntity<MainRecommendReadResponseDto> createMain(
             @CurrentUser Account account,
             @PathVariable Long accountId,
@@ -81,8 +82,8 @@ public class RecommendController {
                 HttpStatus.CREATED);
     }
 
-    @GetMapping("/interest")
-    public ResponseEntity<MainRecommendReadResponseDto> readInterest(
+    @GetMapping("/interests")
+    public ResponseEntity<InterestRecommendReadResponseDto> readInterest(
             @CurrentUser Account account,
             @PathVariable Long accountId) {
         if (accountId != account.getId()) {

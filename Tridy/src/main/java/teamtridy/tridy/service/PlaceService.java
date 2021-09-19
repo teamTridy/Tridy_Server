@@ -183,7 +183,7 @@ public class PlaceService {
         } else {
             return PlaceReviewReadAllResponseDto
                     .builder()
-                    .lastReviewId(-1L)
+                    .lastReviewId(null)
                     .currentSize(0)
                     .hasNextPage(false)
                     .ratingAverage(0f)

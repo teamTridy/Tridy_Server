@@ -1,5 +1,6 @@
 package teamtridy.tridy.error;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import java.nio.file.AccessDeniedException;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +91,14 @@ public class GlobalErrorHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(JsonParseException.class)
+    protected ResponseEntity<ErrorResponse> handleJsonParseException(JsonParseException e) {
+        log.error("handleJsonParseException", e);
+        final ErrorResponse response = ErrorResponse
+                .of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
@@ -97,4 +106,6 @@ public class GlobalErrorHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INTER_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }

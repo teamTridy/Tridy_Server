@@ -1,8 +1,7 @@
 package teamtridy.tridy.error;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,20 +19,20 @@ import org.springframework.validation.BindingResult;
 @Builder
 public class ErrorResponse {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    private Date timestamp;
-    private Integer code;
+    private LocalDateTime timestamp;
+    private Integer status;
     private String message;
     private List<FieldError> details;
 
     public static ErrorResponse of(final ErrorCode code) {
 
-        return ErrorResponse.builder().timestamp(new Date()).code(code.getStatus().value())
+        return ErrorResponse.builder().timestamp(LocalDateTime.now())
+                .status(code.getStatus().value())
                 .message(code.getMessage()).build();
     }
 
     public static ErrorResponse of(Integer code, String message) {
-        return ErrorResponse.builder().timestamp(new Date()).code(code)
+        return ErrorResponse.builder().timestamp(LocalDateTime.now()).status(code)
                 .message(message).build();
     }
 
@@ -45,7 +44,8 @@ public class ErrorResponse {
             errors.add(FieldError.of(fieldError));
         }
 
-        return ErrorResponse.builder().timestamp(new Date()).code(code.getStatus().value())
+        return ErrorResponse.builder().timestamp(LocalDateTime.now())
+                .status(code.getStatus().value())
                 .message(code.getMessage()).details(errors).build();
     }
 

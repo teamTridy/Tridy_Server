@@ -25,4 +25,9 @@ public class TendencyDto {
     @Size(min = 3, max = 5, message = "관심활동은 3개이상 5개이하 선택해야합니다.")
     @NotNull
     private List<Long> interestIds;
+
+    @Override
+    public String toString() {
+        return "Tendency";
+    }
 }

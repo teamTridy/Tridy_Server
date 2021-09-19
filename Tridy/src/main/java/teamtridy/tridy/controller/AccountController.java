@@ -66,7 +66,7 @@ public class AccountController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<SigninResponseDto> login(
+    public ResponseEntity<SigninResponseDto> signin(
             @Valid @RequestBody SigninRequestDto signinRequestDto) {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();

@@ -26,4 +26,9 @@ public class AccountDto {
         }
         return accountDto;
     }
+
+    @Override
+    public String toString() {
+        return "Account";
+    }
 }

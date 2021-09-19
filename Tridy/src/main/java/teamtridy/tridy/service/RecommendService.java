@@ -24,6 +24,7 @@ import teamtridy.tridy.domain.repository.RecommendRepository;
 import teamtridy.tridy.domain.repository.RecommendRepository.DistanceIncludePlace;
 import teamtridy.tridy.domain.repository.RecommendRepository.PlaceId;
 import teamtridy.tridy.domain.repository.RecommendTypeRepository;
+import teamtridy.tridy.dto.InterestRecommendPlaceDto;
 import teamtridy.tridy.dto.InterestRecommendReadResponseDto;
 import teamtridy.tridy.dto.MainRecommendReadResponseDto;
 import teamtridy.tridy.service.dto.MainRecommendPlaceDto;
@@ -51,7 +52,7 @@ public class RecommendService {
 따라서 특정 엔티티의 ID 값만 활용할 일이 있다면 DB 에 접근하지 않고 프록시만 가져와서 사용할 수 있습니다.
      */
     @Cacheable(value = "interestRecommendCache", key = "#account.getId()")
-    public List<InterestRecommendReadResponseDto> readInterest(Account account) {
+    public InterestRecommendReadResponseDto readInterest(Account account) {
 
         LocalDateTime todayStartTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
         LocalDateTime todayEndTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
@@ -82,22 +83,20 @@ public class RecommendService {
                 .collect(
                         Collectors.toList());
 
-        List<InterestRecommendReadResponseDto> interestRecommendReadResponseDtos = new ArrayList<>();
-        interestRecommendReadResponseDtos
-                .add(InterestRecommendReadResponseDto.builder()
+        InterestRecommendReadResponseDto interestRecommendReadResponseDto = InterestRecommendReadResponseDto
+                .builder().interest1(InterestRecommendPlaceDto.builder()
                         .interestId(interest1Recommends.get(0).getInterest().getId())
-                        .places(interest1RecommendPlaceDtos).build());
-        interestRecommendReadResponseDtos
-                .add(InterestRecommendReadResponseDto.builder()
+                        .places(interest1RecommendPlaceDtos).build())
+                .interest2(InterestRecommendPlaceDto.builder()
                         .interestId(interest2Recommends.get(0).getInterest().getId())
-                        .places(interest2RecommendPlaceDtos).build());
+                        .places(interest2RecommendPlaceDtos).build()).build();
 
-        return interestRecommendReadResponseDtos;
+        return interestRecommendReadResponseDto;
     }
 
     @CachePut(value = "interestRecommendCache", key = "#account.getId()")
     @Transactional
-    private List<InterestRecommendReadResponseDto> createInterest(Account account) {
+    private InterestRecommendReadResponseDto createInterest(Account account) {
         List<Interest> allInterests = null;
 
         if (account.getHasTendency()) {
@@ -150,15 +149,15 @@ public class RecommendService {
                 .collect(
                         Collectors.toList());
 
-        List<InterestRecommendReadResponseDto> interestRecommendReadResponseDtos = new ArrayList<>();
-        interestRecommendReadResponseDtos
-                .add(InterestRecommendReadResponseDto.builder().interestId(interest1.getId())
-                        .places(interest1RecommendPlaceDtos).build());
-        interestRecommendReadResponseDtos
-                .add(InterestRecommendReadResponseDto.builder().interestId(interest2.getId())
-                        .places(interest2RecommendPlaceDtos).build());
+        InterestRecommendReadResponseDto interestRecommendReadResponseDto = InterestRecommendReadResponseDto
+                .builder().interest1(InterestRecommendPlaceDto.builder()
+                        .interestId(interest1Recommends.get(0).getInterest().getId())
+                        .places(interest1RecommendPlaceDtos).build())
+                .interest2(InterestRecommendPlaceDto.builder()
+                        .interestId(interest2Recommends.get(0).getInterest().getId())
+                        .places(interest2RecommendPlaceDtos).build()).build();
 
-        return interestRecommendReadResponseDtos;
+        return interestRecommendReadResponseDto;
     }
 
     @Cacheable(value = "mainRecommendCache", key = "#account.getId()")

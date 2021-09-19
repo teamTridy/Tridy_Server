@@ -24,6 +24,7 @@ import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
 import teamtridy.tridy.dto.PlaceReadResponseDto;
+import teamtridy.tridy.dto.PlaceReviewReadAllResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.service.PlaceService;
@@ -78,7 +79,7 @@ public class PlaceController {
     }
 
     @GetMapping("/{placeId}/reviews")
-    public ResponseEntity<ReviewDto> readAllReview(@CurrentUser Account account,
+    public ResponseEntity<PlaceReviewReadAllResponseDto> readAllReview(@CurrentUser Account account,
             @PathVariable Long placeId,
             @RequestParam(defaultValue = "9223372036854775807") Long lastReviewId, //Long.MAX_VALUE
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
