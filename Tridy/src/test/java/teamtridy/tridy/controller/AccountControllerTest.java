@@ -184,13 +184,13 @@ public class AccountControllerTest extends ApiDocumentationTest {
 
         //when
         SignupRequestDto signupRequestDto = SignupRequestDto.builder().socialType("google")
-                .socialToken("{socialToken}").nickname("트리디").build();
+                .socialToken("{socialToken}").nickname("tridy").build();
 
         ResultActions result = this.mockMvc.perform(
                 post("/api/v1/accounts/signup")
-                        .content(objectMapper.writeValueAsString(signupRequestDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequestDto))
         );
 
         //then

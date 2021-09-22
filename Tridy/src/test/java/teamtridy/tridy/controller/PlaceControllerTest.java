@@ -417,8 +417,8 @@ class PlaceControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
-        ReviewDto reviewDto = ReviewDto.builder().id(30L).authorNickname("트리디")
-                .comment("괜찮은 장소예요")
+        ReviewDto reviewDto = ReviewDto.builder().id(30L).authorNickname("tridy")
+                .comment("good place")
                 .isPrivate(false).rating(5).isAuthor(true).createdAt(LocalDate.now())
                 .build();
 
@@ -427,7 +427,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
 
         //when
         ReviewCreateRequestDto reviewCreateRequestDto = ReviewCreateRequestDto.builder()
-                .comment("괜찮은 장소예요").isPrivate(false).rating(5).build();
+                .comment("I want to go again").isPrivate(false).rating(5).build();
 
         ResultActions result = this.mockMvc.perform(
                 post("/api/v1/places/{placeId}/reviews", 1L)
@@ -484,7 +484,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
 
         //when
         ReviewUpdateRequestDto reviewUpdateRequestDto = ReviewUpdateRequestDto.builder()
-                .comment("괜찮은 장소예요").isPrivate(false).rating(5).build();
+                .comment("It's a nice place.").isPrivate(false).rating(5).build();
 
         ResultActions result = this.mockMvc.perform(
                 put("/api/v1/places/{placeId}/reviews/{reviewId}", 1L, 1L)

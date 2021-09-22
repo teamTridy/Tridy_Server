@@ -30,7 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import teamtridy.tridy.config.TokenProvider;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.service.AccountService;
@@ -210,10 +209,8 @@ public abstract class ApiDocumentationTest {
     public void setUp(WebApplicationContext webApplicationContext,
             RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .apply(springSecurity())
-                .apply(documentationConfiguration(restDocumentation).snippets()
-                        .withEncoding("UTF-8"))
+                .apply(documentationConfiguration(restDocumentation).snippets())
                 .build();
 
         Account account = Account.builder().id(1L).socialId("{socialId}").build();
