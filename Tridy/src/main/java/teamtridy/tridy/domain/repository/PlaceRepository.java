@@ -38,9 +38,20 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     Slice<Place> findAllByQueryAndCategoryInAndRegionIn(String query, List<Category> categories,
             List<Region> regions, Pageable pageable);
 
+    @Query(value =
+            "SELECT * FROM place p LEFT JOIN review r on p.place_id = r.place_id \n"
+                    + "WHERE p.category_id in (select category_id from category where parent_id in (select category_id from category where parent_id = :depth1CategoryId))\n"
+                    + "GROUP BY p.place_id \n"
+                    + "ORDER BY \n"
+                    + "\t(CASE WHEN COUNT(r.place_id) != 0 THEN 1 ELSE 2 END), \n"
+                    + "\tCOUNT(r.place_id) DESC, \n"
+                    + "\t(CASE WHEN PERCENT_RANK() OVER (ORDER BY p.place_id DESC) > 0.5 THEN 1 ELSE 2 END),\n"
+                    + "\tRAND()", nativeQuery = true)
+    Slice<Place> findAllByCategoryInOrderByReviewCount(Long depth1CategoryId,
+            Pageable pageable);
 
-    Slice<Place> findAllByCategoryInAndRegionIn(List<Category> depth3Categories,
+    Slice<Place> findAllByCategoryInAndRegionInOrderById(List<Category> depth3Categories,
             List<Region> regions, Pageable pageable);
 
-    Slice<Place> findAllByCategoryIn(List<Category> depth3Categories, Pageable pageable);
+    Slice<Place> findAllByCategoryInOrderById(List<Category> depth3Categories, Pageable pageable);
 }

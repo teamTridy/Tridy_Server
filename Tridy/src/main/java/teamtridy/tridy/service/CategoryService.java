@@ -107,10 +107,11 @@ public class CategoryService {
         } else {
             if (regions != null) {
                 places = placeRepository
-                        .findAllByCategoryInAndRegionIn(depth3Categories, regions, pageRequest);
+                        .findAllByCategoryInAndRegionInOrderById(depth3Categories, regions,
+                                pageRequest);
             } else {
                 places = placeRepository
-                        .findAllByCategoryIn(depth3Categories, pageRequest);
+                        .findAllByCategoryInOrderById(depth3Categories, pageRequest);
             }
         }
 
