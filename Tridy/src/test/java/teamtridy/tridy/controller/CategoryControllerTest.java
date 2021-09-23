@@ -155,8 +155,8 @@ class CategoryControllerTest extends ApiDocumentationTest {
     }
 
     @Test
-    void readAllPlaceByDepth1AndQuery() throws Exception {
-//시큐리티 세팅
+    void readAllPlaceByDepth1() throws Exception {
+        //시큐리티 세팅
 
         given(tokenProvider.validateToken(any(String.class)))
                 .willReturn(true);
@@ -188,8 +188,9 @@ class CategoryControllerTest extends ApiDocumentationTest {
         PlaceReadAllResponseDto placeReadAllResponseDto = PlaceReadAllResponseDto.builder()
                 .currentPage(1).currentSize(2).hasNextPage(false).places(placeDtos).build();
 
-        given(categoryService.readAllPlaceByDepth1AndQuery(account, 1, 10, 271L, "오름",
-                Arrays.asList(2L, 3L), Arrays.asList(306L, 307L, 308L)))
+        given(categoryService
+                .readAllPlaceByDepth1OrderByPopularity(account, 1, 10, 271L, "오름",
+                        Arrays.asList(2L, 3L), Arrays.asList(306L, 307L, 308L)))
                 .willReturn(placeReadAllResponseDto);
 
         //when
@@ -198,6 +199,7 @@ class CategoryControllerTest extends ApiDocumentationTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                         .queryParam("page", "1")
                         .queryParam("size", "10")
+                        .queryParam("sort", "popularity")
                         .queryParam("query", "오름")
                         .queryParam("depth3CategoryIds", "306,307,308")
                         .queryParam("regionIds", "2,3")
@@ -225,16 +227,21 @@ class CategoryControllerTest extends ApiDocumentationTest {
                                 parameterWithName("size")
                                         .description("요청 컨텐츠 개수\n(1 이상 30 이하) (기본값: 10)")
                                         .optional(),
+                                parameterWithName("sort")
+                                        .description(
+                                                "요청 정렬 기준 \n(popularity/review) (기본값: popularity)")
+                                        .optional(),
                                 parameterWithName("query")
-                                        .description("검색할 키워드\n(카테고리별 장소 목록 조회만 원할시 생략)")
+                                        .description(
+                                                "검색할 키워드\n\n(정렬기준이 popularity일때만 요청 가능)")
                                         .optional(),
                                 parameterWithName("depth3CategoryIds")
                                         .description(
-                                                "필터링할 depth3 카테고리 고유 id값들\n(id값은 Category API로 확인)\n(여러개일 경우 ,로 구분)")
+                                                "필터링할 depth3 카테고리 고유 id값들\n(정렬기준이 popularity일때만 요청 가능)\n(id값은 Category API로 확인)\n(여러개일 경우 ,로 구분)")
                                         .optional(),
                                 parameterWithName("regionIds")
                                         .description(
-                                                "필터링할 지역 고유 id값들\n(2:제주시, 3:서귀포시)\n(여러개일 경우 ,로 구분)")
+                                                "필터링할 지역 고유 id값들\n(2:제주시, 3:서귀포시)\n (정렬기준이 popularity일때만 요청 가능) \n (여러개일 경우 ,로 구분)")
                                         .optional()
                         ),
                         responseFields(

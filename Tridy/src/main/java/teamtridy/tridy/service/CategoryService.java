@@ -56,29 +56,26 @@ public class CategoryService {
         return categoryDto;
     }
 
+
     @Transactional
-    public PlaceReadAllResponseDto readAllPlaceByDepth1AndQuery(Account account, Integer page,
+    public PlaceReadAllResponseDto readAllPlaceByDepth1OrderByPopularity(Account account,
+            Integer page,
             Integer size,
             Long depth1CategoryId,
             String query, List<Long> regionIds, List<Long> depth3CategoryIds) {
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Slice<Place> places;
 
         Category depth1Category = categoryRepository
                 .findById(depth1CategoryId) // foreach 는 요소를 돌면서 실행되는 최종 작업
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        List<Region> regions = null;
-        if (regionIds != null) {
-            regions = regionIds.stream()
-                    .map(regionId -> regionRepository.findById(regionId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)))
-                    .collect(Collectors.toList());
-        }
-
         List<Category> depth3Categories;
         if (depth3CategoryIds != null) { //필터링할 최하위 카테고리 ID 값이 들어왔으면
             depth3Categories = depth3CategoryIds.stream()
                     .map(subCatId -> categoryRepository
-                            .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
+                            .findByIdAndDepth(subCatId, 3) // foreach 는 요소를 돌면서 실행되는 최종 작업
                             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
                     .collect(Collectors.toList());
         } else {
@@ -89,8 +86,14 @@ public class CategoryService {
                     .collect(Collectors.toList());
         }
 
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Slice<Place> places;
+        List<Region> regions = null;
+
+        if (regionIds != null) {
+            regions = regionIds.stream()
+                    .map(regionId -> regionRepository.findById(regionId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.REGION_NOT_FOUND)))
+                    .collect(Collectors.toList());
+        }
 
         if (query != null) {
             String cleanQuery = query.strip().replace("\\s+", " ").replace(" ", "%");
@@ -107,10 +110,11 @@ public class CategoryService {
         } else {
             if (regions != null) {
                 places = placeRepository
-                        .findAllByCategoryInAndRegionIn(depth3Categories, regions, pageRequest);
+                        .findAllByCategoryInAndRegionInOrderById(depth3Categories, regions,
+                                pageRequest);
             } else {
                 places = placeRepository
-                        .findAllByCategoryIn(depth3Categories, pageRequest);
+                        .findAllByCategoryInOrderById(depth3Categories, pageRequest);
             }
         }
 
@@ -124,4 +128,32 @@ public class CategoryService {
                 .hasNextPage(places.hasNext())
                 .places(placeDtos).build();
     }
+
+    @Cacheable(value = "readAllPlaceByDepth1OrderByReviewCountCache", key = "#page+#size+#depth1CategoryId")
+    @Transactional
+    public PlaceReadAllResponseDto readAllPlaceByDepth1OrderByReviewCount(Account account,
+            Integer page,
+            Integer size,
+            Long depth1CategoryId) {
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+
+        categoryRepository
+                .findById(depth1CategoryId) // foreach 는 요소를 돌면서 실행되는 최종 작업
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        Slice<Place> places = placeRepository
+                .findAllByCategoryInOrderByReviewCount(depth1CategoryId, pageRequest);
+
+        List<PlaceDto> placeDtos = places.stream()
+                .map(place -> PlaceDto.of(place, account))
+                .collect(Collectors.toList());
+
+        return PlaceReadAllResponseDto.builder()
+                .currentPage(places.getNumber() + 1)
+                .currentSize(places.getNumberOfElements())
+                .hasNextPage(places.hasNext())
+                .places(placeDtos).build();
+    }
+
 }
