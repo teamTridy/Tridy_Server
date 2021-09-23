@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -100,6 +101,13 @@ public class AccountController {
                 HttpStatus.OK);
     }
 
+    @DeleteMapping("/{accountId}")
+    public ResponseEntity<AccountDto> delete(@CurrentUser Account account,
+            @PathVariable Long accountId) {
+        accountService.delete(account, accountId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
 
     @GetMapping("/{accountId}/picks")
     public ResponseEntity<PickReadAllResponseDto> readAllPick(@CurrentUser Account account,
@@ -114,9 +122,13 @@ public class AccountController {
     public ResponseEntity<AccountReviewReadAllResponseDto> readAllReview(
             @CurrentUser Account account,
             @PathVariable Long accountId,
+            @RequestParam @Min(1900) @Max(2999) Integer year,
+            @RequestParam @Min(1) @Max(12) @NotNull Integer month,
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size) {
-        return new ResponseEntity(accountService.readAllReview(account, accountId, page, size),
+        return new ResponseEntity(
+                accountService
+                        .readAllReviewByYearAndMonth(account, accountId, year, month, page, size),
                 HttpStatus.OK);
     }
 }

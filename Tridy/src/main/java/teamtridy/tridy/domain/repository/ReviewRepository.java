@@ -1,5 +1,6 @@
 package teamtridy.tridy.domain.repository;
 
+import java.time.LocalDateTime;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Long countByPlaceAndIsPrivateAndRating(Place place, Boolean isPrivate, Integer rating);
 
-    Slice<Review> findByAccountOrderByIdDesc(Account account, Pageable pageable);
+    Slice<Review> findByAccountAndCreatedAtBetweenOrderByIdDesc(Account account,
+            LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
 }

@@ -9,6 +9,8 @@ import teamtridy.tridy.service.dto.ReviewDto;
 @Builder
 public class AccountReviewReadAllResponseDto {
 
+    private Integer year;
+    private Integer month;
     private Integer currentPage;
     private Integer currentSize;
     private Boolean hasNextPage;
