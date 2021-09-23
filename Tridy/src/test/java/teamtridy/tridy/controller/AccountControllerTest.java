@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
@@ -438,29 +439,37 @@ public class AccountControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
+        LocalDate date = LocalDate.of(2021, 9, 1);
+
         ReviewDto reviewDto1 = ReviewDto.builder().id(29L).authorNickname("트리디")
                 .comment("여기 정말 좋습니다!")
-                .isPrivate(false).rating(5).isAuthor(true).createdAt(LocalDate.now().minusDays(5))
+                .isPrivate(false).rating(5).isAuthor(true).createdAt(date.minusDays(5))
                 .build();
 
         ReviewDto reviewDto2 = ReviewDto.builder().id(30L).authorNickname("트리디")
                 .comment("오늘은 그냥 그랬다.")
-                .isPrivate(true).rating(3).isAuthor(true).createdAt(LocalDate.now())
+                .isPrivate(true).rating(3).isAuthor(true).createdAt(date)
                 .build();
 
         List<ReviewDto> reviewDtos = Arrays.asList(reviewDto1, reviewDto2);
 
         AccountReviewReadAllResponseDto accountReviewReadAllResponseDto = AccountReviewReadAllResponseDto
                 .builder()
+                .year(date.getYear())
+                .month(date.getMonthValue())
                 .currentPage(1).currentSize(2).hasNextPage(false).reviews(reviewDtos).build();
 
-        given(accountService.readAllReview(account, 1L, 1, 10))
+        given(accountService
+                .readAllReviewByYearAndMonth(account, 1L, date.getYear(), date.getMonthValue(), 1,
+                        10))
                 .willReturn(accountReviewReadAllResponseDto);
 
         //when
         ResultActions result = this.mockMvc.perform(
                 get("/api/v1/accounts/{accountId}/reviews", 1L)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                        .queryParam("year", String.valueOf(date.getYear()))
+                        .queryParam("month", String.valueOf(date.getMonthValue()))
                         .queryParam("page", "1")
                         .queryParam("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -481,6 +490,10 @@ public class AccountControllerTest extends ApiDocumentationTest {
                                 parameterWithName("accountId").description("계정 고유 id값")
                         ),
                         requestParameters(
+                                parameterWithName("year")
+                                        .description("조회할 연도"),
+                                parameterWithName("month")
+                                        .description("조회할 월").optional(),
                                 parameterWithName("page")
                                         .description("요청 페이지\n(1 이상) (기본값: 1)").optional(),
                                 parameterWithName("size")
@@ -488,6 +501,10 @@ public class AccountControllerTest extends ApiDocumentationTest {
                                         .optional()
                         ),
                         responseFields(
+                                fieldWithPath("year")
+                                        .description("조회한 연도"),
+                                fieldWithPath("month")
+                                        .description("조회한 월"),
                                 fieldWithPath("currentPage").type(JsonFieldType.NUMBER)
                                         .description("현재 페이지"),
                                 fieldWithPath("currentSize").type(JsonFieldType.NUMBER)

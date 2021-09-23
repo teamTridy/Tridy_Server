@@ -1,5 +1,8 @@
 package teamtridy.tridy.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -198,7 +201,8 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
-    public AccountReviewReadAllResponseDto readAllReview(Account account, Long accountId,
+    public AccountReviewReadAllResponseDto readAllReviewByYearAndMonth(Account account,
+            Long accountId, Integer year, Integer month,
             Integer page,
             Integer size) {
         accountRepository.findById(accountId)
@@ -210,14 +214,24 @@ public class AccountService implements UserDetailsService {
 
         PageRequest pageRequest = PageRequest.of(page - 1, size);
 
+        // Period: A month
+        LocalDate StartDate = LocalDate.of(year, month, 1);
+        LocalDateTime startTime = LocalDateTime
+                .of(StartDate, LocalTime.of(0, 0, 0));
+        LocalDateTime endTime = LocalDateTime
+                .of(StartDate.withDayOfMonth(StartDate.lengthOfMonth()), LocalTime.of(23, 59, 59));
+
         Slice<Review> reviews = reviewRepository
-                .findByAccountOrderByIdDesc(account, pageRequest);
+                .findByAccountAndCreatedAtBetweenOrderByIdDesc(account, startTime, endTime,
+                        pageRequest);
 
         List<ReviewDto> reviewDtos = reviews.stream()
                 .map(review -> ReviewDto.of(review, account))
                 .collect(Collectors.toList());
 
         return AccountReviewReadAllResponseDto.builder()
+                .year(year)
+                .month(month)
                 .currentPage(reviews.getNumber() + 1)
                 .currentSize(reviews.getNumberOfElements())
                 .hasNextPage(reviews.hasNext())
