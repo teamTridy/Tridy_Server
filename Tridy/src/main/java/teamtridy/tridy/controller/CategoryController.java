@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
 import teamtridy.tridy.dto.PlaceReadAllResponseDto;
+import teamtridy.tridy.error.CustomException;
+import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.CategoryService;
 import teamtridy.tridy.service.dto.CategoryDto;
 
@@ -45,17 +47,29 @@ public class CategoryController {
     }
 
     @GetMapping("/{depth1CategoryId}/places")
-    public ResponseEntity<PlaceReadAllResponseDto> readAllPlaceByDepth1AndQuery(
+    public ResponseEntity<PlaceReadAllResponseDto> readAllPlaceByDepth1(
             @CurrentUser Account account,
             @PathVariable Long depth1CategoryId,
             @RequestParam(defaultValue = "1") @Min(1) Integer page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(30) @NotNull Integer size,
+            @RequestParam(defaultValue = "popularity") @NotNull String sort,
             @RequestParam(required = false) @Length(min = 2) String query,
             @RequestParam(required = false) List<Long> regionIds,
             @RequestParam(required = false) List<Long> depth3CategoryIds) {
-        return new ResponseEntity(categoryService.readAllPlaceByDepth1AndQuery(account, page,
-                size,
-                depth1CategoryId,
-                query, regionIds, depth3CategoryIds), HttpStatus.OK);
+
+        if (sort.equals("popularity")) {
+            return new ResponseEntity(
+                    categoryService.readAllPlaceByDepth1OrderByPopularity(account, page,
+                            size,
+                            depth1CategoryId,
+                            query, regionIds, depth3CategoryIds), HttpStatus.OK);
+        } else if (sort.equals("review")) {
+            return new ResponseEntity(
+                    categoryService.readAllPlaceByDepth1OrderByReviewCount(account, page,
+                            size,
+                            depth1CategoryId), HttpStatus.OK);
+        } else {
+            throw new CustomException(ErrorCode.SORT_NOT_FOUND);
+        }
     }
 }

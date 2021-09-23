@@ -39,6 +39,7 @@ public enum ErrorCode {
     REGION_NOT_FOUND(NOT_FOUND, "존재하지 않는 지역입니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "존재하지 않는 리뷰입니다."),
     PICK_NOT_FOUND(NOT_FOUND, "찜하지 않은 장소입니다."),
+    SORT_NOT_FOUND(NOT_FOUND, "존재하지 않는 정렬 기준입니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     ACCOUNT_DUPLICATION(CONFLICT, "이미 가입된 계정입니다"),
@@ -49,6 +50,7 @@ public enum ErrorCode {
     /* 500 */
     INTER_SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
     EXTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "외부 API 호출 오류입니다.");
+
 
     private final HttpStatus status;
     private final String message;

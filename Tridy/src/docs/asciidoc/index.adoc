@@ -344,6 +344,10 @@ include::{snippets}/place-search/response-fields-place.adoc[]
 *Depth1 카테고리내* 장소 목록을 조회합니다.
 Depth1 카테고리내에서 장소를 검색, 지역 다중 필터링, Depth 3 카테고리 다중 필터링이 가능합니다.
 
+* 트리디의 추천 리스트 정렬 기준 : popularity (인기순)
+* 인기 많은 장소 리스트 정렬 기준 : review (리뷰순)
+* [blue]*인기 많은 장소 리스트 조회는 /api/v1/categories/{depth1CategoryId}/places?page=1&size=15&sort=review 로 고정하여 요청합니다.*
+
 ==== Request
 
 ===== Request HTTP Example
