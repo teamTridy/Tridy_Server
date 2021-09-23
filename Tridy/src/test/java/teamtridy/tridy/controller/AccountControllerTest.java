@@ -340,6 +340,47 @@ public class AccountControllerTest extends ApiDocumentationTest {
     }
 
     @Test
+    void testDelete() throws Exception {
+        //시큐리티 세팅
+
+        given(tokenProvider.validateToken(any(String.class)))
+                .willReturn(true);
+
+        given(tokenProvider.getAuthentication(any(String.class)))
+                .willReturn(this.authentication);
+
+        given(accountService.getCurrentAccount())
+                .willReturn(this.account);
+
+        //given
+
+        willDoNothing().given(accountService).delete(account, 1L);
+
+        //when
+        ResultActions result = this.mockMvc.perform(
+                delete("/api/v1/accounts/{accountId}", 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andExpect(status().isNoContent())
+                .andDo(document("account-delete", // (4)
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestHeaders(//요청 헤더
+                                headerWithName(HttpHeaders.AUTHORIZATION)
+                                        .description(
+                                                "사용자 인증 수단, 액세스 토큰 값\nAuthorization: Bearer {ACCESS_TOKEN}")
+                        ),
+                        pathParameters(
+                                parameterWithName("accountId").description("계정 고유 id값")
+                        )
+                ));
+    }
+
+    @Test
     void testReadAllPick() throws Exception {
         //시큐리티 세팅
 

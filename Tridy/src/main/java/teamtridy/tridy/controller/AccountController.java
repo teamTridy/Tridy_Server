@@ -101,6 +101,13 @@ public class AccountController {
                 HttpStatus.OK);
     }
 
+    @DeleteMapping("/{accountId}")
+    public ResponseEntity<AccountDto> delete(@CurrentUser Account account,
+            @PathVariable Long accountId) {
+        accountService.delete(account, accountId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
 
     @GetMapping("/{accountId}/picks")
     public ResponseEntity<PickReadAllResponseDto> readAllPick(@CurrentUser Account account,

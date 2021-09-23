@@ -172,6 +172,13 @@ public class AccountService implements UserDetailsService {
         return AccountDto.of(account, tendencyUpdateRequestDto.getInterestIds());
     }
 
+    @Transactional
+    public void delete(Account account, Long accountId) {
+        if (account.getId() != accountId) {
+            new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+        accountRepository.delete(account);
+    }
 
     @Transactional
     public PickReadAllResponseDto readAllPick(Account account, Long accountId,
