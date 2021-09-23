@@ -75,7 +75,7 @@ public class CategoryService {
         if (depth3CategoryIds != null) { //필터링할 최하위 카테고리 ID 값이 들어왔으면
             depth3Categories = depth3CategoryIds.stream()
                     .map(subCatId -> categoryRepository
-                            .findById(subCatId) // foreach 는 요소를 돌면서 실행되는 최종 작업
+                            .findByIdAndDepth(subCatId, 3) // foreach 는 요소를 돌면서 실행되는 최종 작업
                             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
                     .collect(Collectors.toList());
         } else {
