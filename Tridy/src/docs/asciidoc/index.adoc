@@ -739,6 +739,8 @@ include::{snippets}/recommend-interest-read-all/response-fields-interestRecommen
 include::{snippets}/recommend-interest-read-all/response-fields-recommendPlace.adoc[]
 &#160;
 
+== 알바 API
+
 [[job-read-all]]
 === 알바 목록 조회, 검색
 
