@@ -120,7 +120,7 @@ class JobControllerTest extends ApiDocumentationTest {
                                 fieldWithPath("hasNextPage").type(JsonFieldType.BOOLEAN)
                                         .description("다음 페이지 존재 여부"),
                                 subsectionWithPath("jobs").type("List<Job>")
-                                        .description("장소 목록\n(없으면 [])")
+                                        .description("알바 목록\n(없으면 [])")
                         ),
                         responseFields(
                                 beneathPath("jobs").withSubsectionId("job"),
@@ -227,7 +227,7 @@ class JobControllerTest extends ApiDocumentationTest {
                                 fieldWithPath("workingDescription").type(JsonFieldType.STRING)
                                         .description("업무 내용"),
                                 fieldWithPath("capacity").type(JsonFieldType.NUMBER)
-                                        .description(3),
+                                        .description("채용 인원"),
                                 fieldWithPath("deadline").type(JsonFieldType.STRING)
                                         .attributes(getDateFormat())
                                         .description("마감일"),
