@@ -233,7 +233,7 @@ class CategoryControllerTest extends ApiDocumentationTest {
                                         .optional(),
                                 parameterWithName("query")
                                         .description(
-                                                "검색할 키워드\n\n(정렬기준이 popularity일때만 요청 가능)")
+                                                "검색할 키워드\n (정렬기준이 popularity일때만 요청 가능)\n (2글자 이상)")
                                         .optional(),
                                 parameterWithName("depth3CategoryIds")
                                         .description(
