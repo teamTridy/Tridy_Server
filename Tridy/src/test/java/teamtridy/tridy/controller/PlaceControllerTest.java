@@ -112,7 +112,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
                                         .description("요청 컨텐츠 개수\n(1 이상 30 이하) (기본값: 10)")
                                         .optional(),
                                 parameterWithName("query")
-                                        .description("검색할 키워드"),
+                                        .description("검색할 키워드\n (2글자 이상)"),
                                 parameterWithName("depth2CategoryIds")
                                         .description(
                                                 "필터링할 depth2 카테고리 고유 id값들\n(id값은 Category API로 확인)\n(여러개일 경우 ,로 구분)")

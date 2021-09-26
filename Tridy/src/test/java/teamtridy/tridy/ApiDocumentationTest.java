@@ -36,6 +36,7 @@ import teamtridy.tridy.service.AccountService;
 import teamtridy.tridy.service.AppleService;
 import teamtridy.tridy.service.CategoryService;
 import teamtridy.tridy.service.GoogleService;
+import teamtridy.tridy.service.JobService;
 import teamtridy.tridy.service.KakaoService;
 import teamtridy.tridy.service.OpenWeatherService;
 import teamtridy.tridy.service.PlaceService;
@@ -203,6 +204,9 @@ public abstract class ApiDocumentationTest {
 
     @MockBean
     protected AppleService appleService;
+
+    @MockBean
+    protected JobService jobService;
 
 
     @BeforeEach // 테스트 클래스 테스트 시작시 1번만호출

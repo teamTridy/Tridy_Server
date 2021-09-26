@@ -40,6 +40,7 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(NOT_FOUND, "존재하지 않는 리뷰입니다."),
     PICK_NOT_FOUND(NOT_FOUND, "찜하지 않은 장소입니다."),
     SORT_NOT_FOUND(NOT_FOUND, "존재하지 않는 정렬 기준입니다"),
+    JOB_NOT_FOUND(NOT_FOUND, "존재하지 않는 아르바이트입니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     ACCOUNT_DUPLICATION(CONFLICT, "이미 가입된 계정입니다"),
