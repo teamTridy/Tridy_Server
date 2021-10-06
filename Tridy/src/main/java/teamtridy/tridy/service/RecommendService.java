@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamtridy.tridy.domain.entity.Account;
@@ -51,7 +50,7 @@ public class RecommendService {
 
 따라서 특정 엔티티의 ID 값만 활용할 일이 있다면 DB 에 접근하지 않고 프록시만 가져와서 사용할 수 있습니다.
      */
-    @Cacheable(value = "interestRecommendCache", key = "#account.getId()")
+
     public InterestRecommendReadResponseDto readInterest(Account account) {
 
         LocalDateTime todayStartTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
@@ -94,7 +93,6 @@ public class RecommendService {
         return interestRecommendReadResponseDto;
     }
 
-    @CachePut(value = "interestRecommendCache", key = "#account.getId()")
     @Transactional
     private InterestRecommendReadResponseDto createInterest(Account account) {
         List<Interest> allInterests = null;
@@ -160,7 +158,6 @@ public class RecommendService {
         return interestRecommendReadResponseDto;
     }
 
-    @Cacheable(value = "mainRecommendCache", key = "#account.getId()")
     @Transactional
     public MainRecommendReadResponseDto readMain(Account account, Double latitude,
             Double longitude,
@@ -192,7 +189,7 @@ public class RecommendService {
                 .build();
     }
 
-    @CachePut(value = "mainRecommendCache", key = "#account.getId()")
+    @CacheEvict(value = "mainRecommendCache", key = "#account.getId()")
     @Transactional
     public MainRecommendReadResponseDto createMain(Account account, Double latitude,
             Double longitude,

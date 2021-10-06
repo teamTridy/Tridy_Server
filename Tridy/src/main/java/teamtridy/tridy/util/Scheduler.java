@@ -24,7 +24,7 @@ public class Scheduler {
 
 
     @Scheduled(cron = "0 5 0 * * *")
-    @CacheEvict(value = {"mainRecommendCache", "interestRecommendCache"}, allEntries = true)
+    @CacheEvict(value = {"mainRecommendCache"}, allEntries = true)
     public void deleteExpiredRecommend() {
         log.info("expiredRecommend deleted");
         recommendService.deleteExpiredMain(); // that has been recommended for three days
