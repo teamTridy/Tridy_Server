@@ -68,7 +68,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .distance(0.3F)
                 .name("얌얌돈까스")
                 .hashtags(hashtags2)
-                .thumbImgUrl(
+                .imgUrl(
                         "https://api.cdn.visitjeju.net/photomng/thumbnailpath/201804/30/7f6c7979-90ee-41fe-b353-613b8e18c425.jpg")
                 .isPicked(false).build();
 
@@ -79,7 +79,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .congestion(null)
                 .distance(2.7F).name("거문오름 [세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
                 .isPicked(true).relateds(relates).build();
 
@@ -88,7 +88,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .distance(1.7F)
                 .name("성산일출봉 [유네스코 세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/85/1876185_image3_1.jpg")
                 .isPicked(false).relateds(relates).build();
 
@@ -178,7 +178,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .distance(0.3F)
                 .name("얌얌돈까스")
                 .hashtags(hashtags2)
-                .thumbImgUrl(
+                .imgUrl(
                         "https://api.cdn.visitjeju.net/photomng/thumbnailpath/201804/30/7f6c7979-90ee-41fe-b353-613b8e18c425.jpg")
                 .isPicked(false).build();
 
@@ -189,7 +189,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .congestion(null)
                 .distance(2.7F).name("거문오름 [세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
                 .isPicked(true).relateds(relates).build();
 
@@ -198,7 +198,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .distance(1.7F)
                 .name("성산일출봉 [유네스코 세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/85/1876185_image3_1.jpg")
                 .isPicked(false).relateds(relates).build();
 
@@ -289,7 +289,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .congestion(null)
                 .distance(2.7F).name("거문오름 [세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
                 .isPicked(false).build();
 

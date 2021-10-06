@@ -174,13 +174,13 @@ class CategoryControllerTest extends ApiDocumentationTest {
         PlaceDto placeDto1 = PlaceDto.builder().id(2L).address("제주특별자치도 제주시 조천읍 선교로 569-36")
                 .name("거문오름 [세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl("http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
+                .imgUrl("http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
                 .isPicked(true).build();
 
         PlaceDto placeDto2 = PlaceDto.builder().id(5L).address("제주특별자치도 제주시 구좌읍 종달논길")
                 .name("용눈이오름")
                 .hashtags(hashtags2)
-                .thumbImgUrl(
+                .imgUrl(
                         "http://tong.visitkorea.or.kr/cms/resource/29/1771329_image3_1.jpg")
                 .isPicked(false).build();
 

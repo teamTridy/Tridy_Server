@@ -14,7 +14,7 @@ public class RecommendPlaceDto {
 
     private Long id;
     private String name;
-    private String thumbImgUrl;
+    private String imgUrl;
     private List<String> hashtags;
     private Boolean isPicked;
 
@@ -27,7 +27,7 @@ public class RecommendPlaceDto {
 
         RecommendPlaceDto relatedRecommendPlaceDto = RecommendPlaceDto.builder()
                 .id(place.getId()).name(place.getName())
-                .thumbImgUrl(place.getThumbImgUrl()).build();
+                .imgUrl(place.getImgUrl()).build();
 
         if (recommend.getDistanceFromReference() != null) {
             Float distance =

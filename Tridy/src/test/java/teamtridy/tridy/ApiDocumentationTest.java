@@ -64,8 +64,8 @@ public abstract class ApiDocumentationTest {
                     .description("장소 이름"),
             fieldWithPath("address").type(JsonFieldType.STRING)
                     .description("장소 주소"),
-            fieldWithPath("thumbImgUrl").type(JsonFieldType.STRING)
-                    .description("장소 대표 이미지").optional(),
+            fieldWithPath("imgUrl").type(JsonFieldType.STRING)
+                    .description("장소 이미지").optional(),
             fieldWithPath("hashtags").type("List<String>")
                     .description("장소 해시태그 리스트"),
             fieldWithPath("isPicked").type(JsonFieldType.BOOLEAN)
@@ -78,8 +78,8 @@ public abstract class ApiDocumentationTest {
                     .description("장소 고유 id값"),
             fieldWithPath("name").type(JsonFieldType.STRING)
                     .description("장소 이름"),
-            fieldWithPath("thumbImgUrl").type(JsonFieldType.STRING)
-                    .description("장소 대표 이미지").optional(),
+            fieldWithPath("imgUrl").type(JsonFieldType.STRING)
+                    .description("장소 이미지").optional(),
             fieldWithPath("hashtags").type("List<String>")
                     .description("장소 해시태그 리스트"),
             fieldWithPath("isPicked").type(JsonFieldType.BOOLEAN)
@@ -97,8 +97,8 @@ public abstract class ApiDocumentationTest {
                     .description("장소 고유 id값"),
             fieldWithPath("name").type(JsonFieldType.STRING)
                     .description("장소 이름"),
-            fieldWithPath("thumbImgUrl").type(JsonFieldType.STRING)
-                    .description("장소 대표 이미지").optional(),
+            fieldWithPath("imgUrl").type(JsonFieldType.STRING)
+                    .description("장소 이미지").optional(),
             fieldWithPath("hashtags").type("List<String>")
                     .description("장소 해시태그 리스트"),
             fieldWithPath("isPicked").type(JsonFieldType.BOOLEAN)

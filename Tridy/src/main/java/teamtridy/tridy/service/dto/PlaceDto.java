@@ -13,14 +13,14 @@ public class PlaceDto {
 
     private Long id;
     private String name;
-    private String thumbImgUrl;
+    private String imgUrl;
     private String address;
     private List<String> hashtags;
     private Boolean isPicked;
 
     public static PlaceDto of(Place place, Account account) {
         PlaceDto placeDto = PlaceDto.builder().id(place.getId()).name(place.getName())
-                .thumbImgUrl(place.getThumbImgUrl()).address(place.getAddress()).build();
+                .imgUrl(place.getImgUrl()).address(place.getAddress()).build();
 
         if (place.getPlaceHashtag().size() != 0) {
             List<String> hashtags = place.getPlaceHashtag().stream()

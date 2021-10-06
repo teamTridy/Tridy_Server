@@ -26,7 +26,7 @@ public class MainRecommendPlaceDto extends RecommendPlaceDto {
 
         MainRecommendPlaceDto mainRecommendPlaceDto = MainRecommendPlaceDto.builder()
                 .id(place.getId()).name(place.getName())
-                .thumbImgUrl(place.getThumbImgUrl()).build();
+                .imgUrl(place.getImgUrl()).build();
 
         if (recommend.getDistanceFromReference() != null) {
             Float distance =
