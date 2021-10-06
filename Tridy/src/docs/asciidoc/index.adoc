@@ -302,7 +302,7 @@ include::{snippets}/account-review-read-all/request-parameters.adoc[]
 include::{snippets}/account-review-read-all/http-response.adoc[]
 
 include::{snippets}/account-review-read-all/response-fields.adoc[]
-include::{snippets}/account-review-read-all/response-fields-review.adoc
+include::{snippets}/account-review-read-all/response-fields-accountReview.adoc[]
 
 
 
@@ -427,7 +427,7 @@ include::{snippets}/place-review-read-all/request-parameters.adoc[]
 include::{snippets}/place-review-read-all/http-response.adoc[]
 
 include::{snippets}/place-review-read-all/response-fields.adoc[]
-include::{snippets}/place-review-read-all/response-fields-review.adoc[]
+include::{snippets}/place-review-read-all/response-fields-placeReview.adoc[]
 
 [[place-review-create]]
 === 장소 리뷰 생성

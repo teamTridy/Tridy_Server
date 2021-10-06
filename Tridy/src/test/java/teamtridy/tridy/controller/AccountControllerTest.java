@@ -563,10 +563,9 @@ public class AccountControllerTest extends ApiDocumentationTest {
                                         .description("계정 리뷰 목록\n((없으면 [])")
                         ),
                         responseFields(
-                                beneathPath("reviews").withSubsectionId("AccountReview"),
+                                beneathPath("reviews").withSubsectionId("accountReview"),
                                 attributes(key("title").value("AccountReview")),
                                 accountReviewResponseFields
-
                         )
                 ));
     }

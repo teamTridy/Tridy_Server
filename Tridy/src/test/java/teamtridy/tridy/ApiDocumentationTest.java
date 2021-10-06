@@ -154,7 +154,8 @@ public abstract class ApiDocumentationTest {
             fieldWithPath("createdAt").attributes(getDateFormat())
                     .type(JsonFieldType.STRING)
                     .description("리뷰 작성일"),
-            fieldWithPath("isPrivate").type(JsonFieldType.BOOLEAN)
+            fieldWithPath("isPrivate").type(JsonFieldType.BOOLEAN).description(
+                    "리뷰 비공개 여부 (타임라인에만 표시 여부)"),
     };
 
     protected FieldDescriptor[] tendencyFields = {

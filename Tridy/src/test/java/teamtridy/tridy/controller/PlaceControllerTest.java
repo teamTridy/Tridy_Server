@@ -396,7 +396,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
                                         .description("장소 리뷰 목록\n((없으면 [])")
                         ),
                         responseFields(
-                                beneathPath("reviews").withSubsectionId("PlaceReview"),
+                                beneathPath("reviews").withSubsectionId("placeReview"),
                                 attributes(key("title").value("PlaceReview")),
                                 placeReviewResponseFields
                         )
