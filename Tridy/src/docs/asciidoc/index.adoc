@@ -245,6 +245,31 @@ include::{snippets}/account-tendency-update/http-response.adoc[]
 include::{snippets}/account-tendency-update/response-fields.adoc[]
 include::{snippets}/account-tendency-update/response-fields-tendency.adoc[]
 
+[[account-delete]]
+=== 계정 삭제
+
+사용자가 작성한 리뷰 목록을 조회합니다.
+리뷰 비공개 여부와 상관없이 작성한 모든 리뷰를 조회합니다.
+목록은 최신순으로 정렬됩니다.
+
+==== Request
+
+===== Request HTTP Example
+
+include::{snippets}/account-delete/http-request.adoc[]
+
+include::{snippets}/account-delete/path-parameters.adoc[]
+
+===== Request Header
+
+include::{snippets}/account-delete/request-headers.adoc[]
+
+==== Response
+
+===== Response HTTP Example
+
+include::{snippets}/account-delete/http-response.adoc[]
+
 [[account-pick-read-all]]
 === 계정 찜 목록 조회
 
@@ -749,6 +774,7 @@ include::{snippets}/recommend-interest-read-all/response-fields-recommendPlace.a
 
 * 알바 날짜별 조회: date 파라미터 요청
 * 알바 검색: query 파라미터 요청
+[blue]*date 파라미터와 query 파라미터는 동시에 요청할 수 없습니다.*
 
 ==== Request
 
