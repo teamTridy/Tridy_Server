@@ -124,7 +124,7 @@ public abstract class ApiDocumentationTest {
                     .description("리뷰 비공개 여부 (타임라인에만 노출 여부)")
     };
 
-    protected FieldDescriptor[] reviewResponseFields = new FieldDescriptor[]{
+    protected FieldDescriptor[] placeReviewResponseFields = new FieldDescriptor[]{
             fieldWithPath("id").type(JsonFieldType.NUMBER)
                     .description("리뷰 고유 id값"),
             fieldWithPath("comment").type(JsonFieldType.STRING)
@@ -136,10 +136,25 @@ public abstract class ApiDocumentationTest {
             fieldWithPath("createdAt").attributes(getDateFormat())
                     .type(JsonFieldType.STRING)
                     .description("리뷰 작성일"),
-            fieldWithPath("isPrivate").type(JsonFieldType.BOOLEAN)
-                    .description("리뷰 비공개 여부 (타임라인에만 노출 여부)"),
             fieldWithPath("isAuthor").type(JsonFieldType.BOOLEAN)
                     .description("리뷰 작성자 여부 (삭제/수정 가능 여부)")
+    };
+
+    protected FieldDescriptor[] accountReviewResponseFields = new FieldDescriptor[]{
+            fieldWithPath("id").type(JsonFieldType.NUMBER)
+                    .description("리뷰 고유 id값"),
+            fieldWithPath("placeId").type(JsonFieldType.NUMBER)
+                    .description("장소 고유 id값"),
+            fieldWithPath("placeName").type(JsonFieldType.STRING)
+                    .description("장소 이름"),
+            fieldWithPath("comment").type(JsonFieldType.STRING)
+                    .description("리뷰 내용"),
+            fieldWithPath("rating").type(JsonFieldType.NUMBER)
+                    .description("리뷰 평점 (1 이상 5 이하)"),
+            fieldWithPath("createdAt").attributes(getDateFormat())
+                    .type(JsonFieldType.STRING)
+                    .description("리뷰 작성일"),
+            fieldWithPath("isPrivate").type(JsonFieldType.BOOLEAN)
     };
 
     protected FieldDescriptor[] tendencyFields = {

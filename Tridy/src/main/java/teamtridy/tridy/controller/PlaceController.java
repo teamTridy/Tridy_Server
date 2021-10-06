@@ -28,7 +28,7 @@ import teamtridy.tridy.dto.PlaceReviewReadAllResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.service.PlaceService;
-import teamtridy.tridy.service.dto.ReviewDto;
+import teamtridy.tridy.service.dto.PlaceReviewDto;
 
 @RestController
 @RequiredArgsConstructor
@@ -89,7 +89,7 @@ public class PlaceController {
 
 
     @PostMapping("/{placeId}/reviews")
-    public ResponseEntity<ReviewDto> saveReview(@CurrentUser Account account,
+    public ResponseEntity<PlaceReviewDto> saveReview(@CurrentUser Account account,
             @PathVariable Long placeId,
             @Valid @RequestBody ReviewCreateRequestDto reviewCreateRequestDto) {
         return new ResponseEntity(
@@ -99,7 +99,7 @@ public class PlaceController {
 
 
     @PutMapping("/{placeId}/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> updateReview(@CurrentUser Account account,
+    public ResponseEntity<PlaceReviewDto> updateReview(@CurrentUser Account account,
             @PathVariable Long placeId, @PathVariable Long reviewId,
             @Valid @RequestBody ReviewUpdateRequestDto reviewUpdateRequestDto) {
         return new ResponseEntity(

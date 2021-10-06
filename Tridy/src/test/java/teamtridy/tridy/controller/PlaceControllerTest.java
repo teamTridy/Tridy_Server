@@ -40,7 +40,7 @@ import teamtridy.tridy.dto.PlaceReviewReadAllResponseDto;
 import teamtridy.tridy.dto.ReviewCreateRequestDto;
 import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.service.dto.PlaceDto;
-import teamtridy.tridy.service.dto.ReviewDto;
+import teamtridy.tridy.service.dto.PlaceReviewDto;
 
 class PlaceControllerTest extends ApiDocumentationTest {
 
@@ -321,15 +321,15 @@ class PlaceControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
-        ReviewDto reviewDto1 = ReviewDto.builder().id(30L).authorNickname("트리디")
+        PlaceReviewDto placeReviewDto1 = PlaceReviewDto.builder().id(30L).authorNickname("트리디")
                 .comment("괜찮은 장소예요")
-                .isPrivate(false).rating(5).isAuthor(true).createdAt(LocalDate.now().minusDays(5))
+                .rating(5).isAuthor(true).createdAt(LocalDate.now().minusDays(5))
                 .build();
-        ReviewDto reviewDto2 = ReviewDto.builder().id(18L).authorNickname("들희디")
+        PlaceReviewDto placeReviewDto2 = PlaceReviewDto.builder().id(18L).authorNickname("들희디")
                 .comment("바람쐬기 좋은 장소")
-                .isPrivate(false).rating(4).isAuthor(false).createdAt(LocalDate.now())
+                .rating(4).isAuthor(false).createdAt(LocalDate.now())
                 .build();
-        List<ReviewDto> reviewDtos = Arrays.asList(reviewDto1, reviewDto2);
+        List<PlaceReviewDto> placeReviewDtos = Arrays.asList(placeReviewDto1, placeReviewDto2);
 
         List<Float> ratingRatios = Arrays.asList(0.05f, 0.15f, 0.28f, 0.10f, 0.42f);
         PlaceReviewReadAllResponseDto placeReviewReadAllResponseDtos = PlaceReviewReadAllResponseDto
@@ -338,7 +338,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
                 .reviewTotalCount(12L)
                 .ratingRatios(ratingRatios)
                 .ratingAverage(3.1f)
-                .reviews(reviewDtos).build();
+                .reviews(placeReviewDtos).build();
 
         given(placeService.readAllReview(account, 1L, 30L, 10))
                 .willReturn(placeReviewReadAllResponseDtos);
@@ -392,13 +392,13 @@ class PlaceControllerTest extends ApiDocumentationTest {
                                 fieldWithPath("ratingAverage").type(JsonFieldType.NUMBER)
                                         .description("리뷰 총 평점 평균")
                                         .attributes(key("format").value("소수점 둘째자리까지")),
-                                subsectionWithPath("reviews").type("List<Review>")
-                                        .description("리뷰 목록\n((없으면 [])")
+                                subsectionWithPath("reviews").type("List<PlaceReview>")
+                                        .description("장소 리뷰 목록\n((없으면 [])")
                         ),
                         responseFields(
-                                beneathPath("reviews").withSubsectionId("review"),
-                                attributes(key("title").value("Review")),
-                                reviewResponseFields
+                                beneathPath("reviews").withSubsectionId("PlaceReview"),
+                                attributes(key("title").value("PlaceReview")),
+                                placeReviewResponseFields
                         )
                 ));
     }
@@ -417,13 +417,13 @@ class PlaceControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
-        ReviewDto reviewDto = ReviewDto.builder().id(30L).authorNickname("tridy")
+        PlaceReviewDto placeReviewDto = PlaceReviewDto.builder().id(30L).authorNickname("tridy")
                 .comment("good place")
-                .isPrivate(false).rating(5).isAuthor(true).createdAt(LocalDate.now())
+                .rating(5).isAuthor(true).createdAt(LocalDate.now())
                 .build();
 
         given(placeService.createReview(eq(account), eq(1L), any(ReviewCreateRequestDto.class)))
-                .willReturn(reviewDto);
+                .willReturn(placeReviewDto);
 
         //when
         ReviewCreateRequestDto reviewCreateRequestDto = ReviewCreateRequestDto.builder()
@@ -454,7 +454,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
                                 reviewRequestFields
                         ),
                         responseFields(
-                                reviewResponseFields
+                                placeReviewResponseFields
                         )
                 ));
     }
@@ -473,14 +473,14 @@ class PlaceControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
-        ReviewDto reviewDto = ReviewDto.builder().id(30L).authorNickname("트리디")
+        PlaceReviewDto placeReviewDto = PlaceReviewDto.builder().id(30L).authorNickname("트리디")
                 .comment("괜찮은 장소예요")
-                .isPrivate(false).rating(5).isAuthor(true).createdAt(LocalDate.now())
+                .rating(5).isAuthor(true).createdAt(LocalDate.now())
                 .build();
 
         given(placeService
                 .updateReview(eq(account), eq(1L), eq(1L), any(ReviewUpdateRequestDto.class)))
-                .willReturn(reviewDto);
+                .willReturn(placeReviewDto);
 
         //when
         ReviewUpdateRequestDto reviewUpdateRequestDto = ReviewUpdateRequestDto.builder()
@@ -512,7 +512,7 @@ class PlaceControllerTest extends ApiDocumentationTest {
                                 reviewRequestFields
                         ),
                         responseFields(
-                                reviewResponseFields
+                                placeReviewResponseFields
                         )
                 ));
     }

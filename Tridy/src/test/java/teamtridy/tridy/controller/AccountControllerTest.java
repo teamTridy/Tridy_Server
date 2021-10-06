@@ -43,8 +43,8 @@ import teamtridy.tridy.dto.SignupRequestDto;
 import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.dto.TokenDto;
 import teamtridy.tridy.service.dto.AccountDto;
+import teamtridy.tridy.service.dto.AccountReviewDto;
 import teamtridy.tridy.service.dto.PlaceDto;
-import teamtridy.tridy.service.dto.ReviewDto;
 import teamtridy.tridy.service.dto.SignupDto;
 import teamtridy.tridy.service.dto.TendencyDto;
 
@@ -400,13 +400,13 @@ public class AccountControllerTest extends ApiDocumentationTest {
         PlaceDto placeDto1 = PlaceDto.builder().id(1L).address("제주특별자치도 서귀포시 성산읍 일출로 284-12")
                 .name("성산일출봉 [유네스코 세계자연유산]")
                 .hashtags(hashtags1)
-                .thumbImgUrl("http://tong.visitkorea.or.kr/cms/resource/85/1876185_image3_1.jpg")
+                .imgUrl("http://tong.visitkorea.or.kr/cms/resource/85/1876185_image3_1.jpg")
                 .isPicked(true).build();
 
         PlaceDto placeDto2 = PlaceDto.builder().id(5L).address("제주특별자치도 제주시 구좌읍 구좌로 44")
                 .name("얌얌돈까스")
                 .hashtags(hashtags2)
-                .thumbImgUrl(
+                .imgUrl(
                         "https://api.cdn.visitjeju.net/photomng/thumbnailpath/201804/30/7f6c7979-90ee-41fe-b353-613b8e18c425.jpg")
                 .isPicked(true).build();
 
@@ -482,23 +482,30 @@ public class AccountControllerTest extends ApiDocumentationTest {
         //given
         LocalDate date = LocalDate.of(2021, 9, 1);
 
-        ReviewDto reviewDto1 = ReviewDto.builder().id(29L).authorNickname("트리디")
+        AccountReviewDto accountReviewDto1 = AccountReviewDto.builder().id(29L).placeId(1L)
+                .placeName("미영이네")
                 .comment("여기 정말 좋습니다!")
-                .isPrivate(false).rating(5).isAuthor(true).createdAt(date.minusDays(5))
+                .isPrivate(false).rating(5).createdAt(date.minusDays(5))
                 .build();
 
-        ReviewDto reviewDto2 = ReviewDto.builder().id(30L).authorNickname("트리디")
+        AccountReviewDto accountReviewDto2 = AccountReviewDto.builder().id(30L)
+                .placeId(2L)
+                .placeName("섭지코지")
+                .isPrivate(true)
                 .comment("오늘은 그냥 그랬다.")
-                .isPrivate(true).rating(3).isAuthor(true).createdAt(date)
+                .rating(3)
+                .createdAt(date)
                 .build();
 
-        List<ReviewDto> reviewDtos = Arrays.asList(reviewDto1, reviewDto2);
+        List<AccountReviewDto> accountReviewDtos = Arrays
+                .asList(accountReviewDto1, accountReviewDto2);
 
         AccountReviewReadAllResponseDto accountReviewReadAllResponseDto = AccountReviewReadAllResponseDto
                 .builder()
                 .year(date.getYear())
                 .month(date.getMonthValue())
-                .currentPage(1).currentSize(2).hasNextPage(false).reviews(reviewDtos).build();
+                .currentPage(1).currentSize(2).hasNextPage(false).reviews(accountReviewDtos)
+                .build();
 
         given(accountService
                 .readAllReviewByYearAndMonth(account, 1L, date.getYear(), date.getMonthValue(), 1,
@@ -552,13 +559,13 @@ public class AccountControllerTest extends ApiDocumentationTest {
                                         .description("현재 페이지의 컨텐츠 개수"),
                                 fieldWithPath("hasNextPage").type(JsonFieldType.BOOLEAN)
                                         .description("다음 페이지 존재 여부"),
-                                subsectionWithPath("reviews").type("List<Review>")
-                                        .description("리뷰 목록\n((없으면 [])")
+                                subsectionWithPath("reviews").type("List<AccountReview>")
+                                        .description("계정 리뷰 목록\n((없으면 [])")
                         ),
                         responseFields(
-                                beneathPath("reviews").withSubsectionId("review"),
-                                attributes(key("title").value("Review")),
-                                reviewResponseFields
+                                beneathPath("reviews").withSubsectionId("AccountReview"),
+                                attributes(key("title").value("AccountReview")),
+                                accountReviewResponseFields
 
                         )
                 ));

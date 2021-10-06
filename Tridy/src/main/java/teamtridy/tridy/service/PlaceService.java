@@ -31,7 +31,7 @@ import teamtridy.tridy.dto.ReviewUpdateRequestDto;
 import teamtridy.tridy.error.CustomException;
 import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.dto.PlaceDto;
-import teamtridy.tridy.service.dto.ReviewDto;
+import teamtridy.tridy.service.dto.PlaceReviewDto;
 
 @RequiredArgsConstructor
 @Service
@@ -155,10 +155,10 @@ public class PlaceService {
                     .findByIdLessThanAndPlaceAndIsPrivateOrderByIdDesc(lastReviewId, place, false,
                             pageRequest);
 
-            List<ReviewDto> reviewDtos = reviews.stream()
-                    .map(review -> ReviewDto.of(review, account))
+            List<PlaceReviewDto> placeReviewDtos = reviews.stream()
+                    .map(review -> PlaceReviewDto.of(review, account))
                     .collect(Collectors.toList());
-            Long newLastReviewId = reviewDtos.get(reviewDtos.size() - 1).getId();
+            Long newLastReviewId = placeReviewDtos.get(placeReviewDtos.size() - 1).getId();
 
             // get rating info
             Float ratingAverage = reviewRepository.getRatingAverageAndIsPrivate(place, false);
@@ -178,7 +178,7 @@ public class PlaceService {
                     .ratingAverage(ratingAverage)
                     .ratingRatios(ratingRatios)
                     .reviewTotalCount(reviewTotalCount)
-                    .reviews(reviewDtos)
+                    .reviews(placeReviewDtos)
                     .build();
         } else {
             return PlaceReviewReadAllResponseDto
@@ -195,7 +195,7 @@ public class PlaceService {
     }
 
     @Transactional
-    public ReviewDto createReview(Account account, Long placeId,
+    public PlaceReviewDto createReview(Account account, Long placeId,
             ReviewCreateRequestDto reviewCreateRequestDto) {
         Place place = placeRepository
                 .findById(placeId)
@@ -207,11 +207,11 @@ public class PlaceService {
 
         review = reviewRepository.save(review);
 
-        return ReviewDto.of(review, account);
+        return PlaceReviewDto.of(review, account);
     }
 
     @Transactional
-    public ReviewDto updateReview(Account account, Long placeId, Long reviewId,
+    public PlaceReviewDto updateReview(Account account, Long placeId, Long reviewId,
             ReviewUpdateRequestDto reviewUpdateRequestDto) {
         placeRepository
                 .findById(placeId)
@@ -226,7 +226,7 @@ public class PlaceService {
 
         reviewUpdateRequestDto.apply(review);
 
-        return ReviewDto.of(review, account);
+        return PlaceReviewDto.of(review, account);
     }
 
     @Transactional

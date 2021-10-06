@@ -40,8 +40,8 @@ import teamtridy.tridy.dto.TokenDto;
 import teamtridy.tridy.error.CustomException;
 import teamtridy.tridy.error.ErrorCode;
 import teamtridy.tridy.service.dto.AccountDto;
+import teamtridy.tridy.service.dto.AccountReviewDto;
 import teamtridy.tridy.service.dto.PlaceDto;
-import teamtridy.tridy.service.dto.ReviewDto;
 import teamtridy.tridy.service.dto.SignupDto;
 import teamtridy.tridy.util.SecurityUtil;
 
@@ -232,8 +232,8 @@ public class AccountService implements UserDetailsService {
                 .findByAccountAndCreatedAtBetweenOrderByIdDesc(account, startTime, endTime,
                         pageRequest);
 
-        List<ReviewDto> reviewDtos = reviews.stream()
-                .map(review -> ReviewDto.of(review, account))
+        List<AccountReviewDto> reviewDtos = reviews.stream()
+                .map(review -> AccountReviewDto.of(review))
                 .collect(Collectors.toList());
 
         return AccountReviewReadAllResponseDto.builder()

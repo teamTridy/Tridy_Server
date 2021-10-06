@@ -8,27 +8,25 @@ import teamtridy.tridy.domain.entity.Review;
 
 @Data
 @Builder
-public class ReviewDto {
+public class PlaceReviewDto {
 
     private Long id;
     private Integer rating;
     private String comment;
-    private Boolean isPrivate;
     private LocalDate createdAt;
     private String authorNickname;
     private Boolean isAuthor;
 
-    public static ReviewDto of(Review review, Account account) {
-        ReviewDto reviewDto = ReviewDto.builder()
+    public static PlaceReviewDto of(Review review, Account account) {
+        PlaceReviewDto placeReviewDto = PlaceReviewDto.builder()
                 .id(review.getId())
                 .rating(review.getRating())
                 .comment(review.getComment())
-                .isPrivate(review.getIsPrivate())
                 .createdAt(review.getCreatedAt().toLocalDate())
                 .authorNickname(review.getAccount().getNickname())
                 .isAuthor(review.getAccount() == account)
                 .build();
 
-        return reviewDto;
+        return placeReviewDto;
     }
 }
