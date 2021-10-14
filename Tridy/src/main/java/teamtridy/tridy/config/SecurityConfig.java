@@ -34,9 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers("/api/v1/accounts/signup", "/console", "/api/v1/accounts/signin",
-                        "/api/v1/accounts/duplicate/nickname",
-                        "/docs/**").permitAll()
+                .mvcMatchers("/console", "/api/v1/accounts/signin/**", "/api/v1/accounts/signup/**",
+                        "/api/v1/accounts/duplicate/**",
+                        "/docs/**")
+                .permitAll() //mvcMatchers("/secured") matches /secured as well as /secured/, /secured.html, /secured.xyz
                 .anyRequest().authenticated();
         http.cors()
                 .disable();

@@ -45,6 +45,8 @@ public class Account extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
     @Column
+    private String password;
+    @Column
     private Boolean isPreferredFar;
     @Column
     private Boolean isPreferredPopular;
