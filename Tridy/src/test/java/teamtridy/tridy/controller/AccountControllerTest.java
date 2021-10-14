@@ -37,8 +37,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import teamtridy.tridy.ApiDocumentationTest;
 import teamtridy.tridy.dto.AccountReviewReadAllResponseDto;
 import teamtridy.tridy.dto.PickReadAllResponseDto;
+import teamtridy.tridy.dto.SigninEmailRequestDto;
 import teamtridy.tridy.dto.SigninRequestDto;
 import teamtridy.tridy.dto.SigninResponseDto;
+import teamtridy.tridy.dto.SignupEmailRequestDto;
 import teamtridy.tridy.dto.SignupRequestDto;
 import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.dto.TokenDto;
@@ -101,6 +103,31 @@ public class AccountControllerTest extends ApiDocumentationTest {
     }
 
     @Test
+    void testIsDuplicatedEmail() throws Exception {
+        //given
+        String email = "tridy@gmail.com";
+
+        given(accountService.isDuplicatedEmail(any(String.class)))
+                .willReturn(false);
+
+        ResultActions result = this.mockMvc.perform(
+                get("/api/v1/accounts/duplicate/email")
+                        .param("email", email)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isNoContent())
+                .andDo(document("account-duplicate-email", // (4)
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestParameters(
+                                parameterWithName("email")
+                                        .description("이메일 \n(이메일 형식)")
+                        )
+                ));
+    }
+
+    @Test
     void testSignin() throws Exception {
         //given
         TendencyDto tendencyDto = getTendencyDto();
@@ -115,7 +142,8 @@ public class AccountControllerTest extends ApiDocumentationTest {
         given(googleService.getSocialId(any(String.class)))
                 .willReturn("{socialId}");
 
-        given(accountService.signin(any(String.class))) // accountService.signin(socialId)
+        given(accountService
+                .signin(any(String.class), any(String.class))) // accountService.signin(socialId)
                 .willReturn(response);
 
         //when
@@ -164,6 +192,69 @@ public class AccountControllerTest extends ApiDocumentationTest {
     }
 
     @Test
+    void testSigninEmail() throws Exception {
+        //given
+        TendencyDto tendencyDto = getTendencyDto();
+        AccountDto accountDto = getAccountDto(tendencyDto);
+        TokenDto tokenDto = getTokenDto();
+
+        SigninResponseDto response = SigninResponseDto.builder()
+                .account(accountDto)
+                .token(tokenDto)
+                .build();
+
+        given(accountService
+                .signin(any(String.class), any(String.class))) // accountService.signin(socialId)
+                .willReturn(response);
+
+        //when
+        SigninEmailRequestDto signinEmailRequestDto = SigninEmailRequestDto.builder()
+                .email("tridy@gmail.com")
+                .password("tridy123!").build();
+
+        ResultActions result = this.mockMvc.perform(
+                post("/api/v1/accounts/signin/email")
+                        .content(objectMapper.writeValueAsString(signinEmailRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andExpect(status().isOk())
+                .andDo(document("account-signin-email", // (4)
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("이메일\n(이메일 형식)"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description(
+                                                "비밀번호\n(대소문자,숫자,특정 특수문자(@#$%^&+=-_!)포함 6글자 이상 12글자 이하)")
+                        ),
+                        responseFields(
+                                subsectionWithPath("account").type("Account").description("계정 정보"),
+                                subsectionWithPath("token").type("Token").description("토큰 정보")
+                        ),
+                        responseFields(
+                                beneathPath("account").withSubsectionId("account"),
+                                attributes(key("title").value("Account")),
+                                accountFields
+                        ),
+                        responseFields(
+                                beneathPath("account.tendency").withSubsectionId("tendency"),
+                                attributes(key("title").value("Tendency")),
+                                tendencyFields
+                        ),
+                        responseFields(
+                                beneathPath("token").withSubsectionId("token"),
+                                attributes(key("title").value("Token")),
+                                tokenFields
+                        )
+
+                ));
+    }
+
+    @Test
     void testSignup() throws Exception {
         //given
         AccountDto accountDto = getAccountDto();
@@ -180,7 +271,8 @@ public class AccountControllerTest extends ApiDocumentationTest {
         willDoNothing().given(accountService)
                 .signup(any(SignupDto.class)); // accountService.signin(socialId)
 
-        given(accountService.signin(any(String.class))) // accountService.signin(socialId)
+        given(accountService
+                .signin(any(String.class), any(String.class))) // accountService.signin(socialId)
                 .willReturn(response);
 
         //when
@@ -204,6 +296,68 @@ public class AccountControllerTest extends ApiDocumentationTest {
                                         .description("소셜 타입\n(google/kakao/apple)"),
                                 fieldWithPath("socialToken").type(JsonFieldType.STRING)
                                         .description("소셜 토큰값"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                        .description("닉네임 \n(2자 이상 10자 이내의 한글,영어,숫자)")
+                        ),
+                        responseFields(
+                                subsectionWithPath("account").type("Account").description("계정 정보"),
+                                subsectionWithPath("token").type("Token").description("토큰 정보")
+                        ),
+                        responseFields(
+                                beneathPath("account").withSubsectionId("account"),
+                                attributes(key("title").value("Account")),
+                                accountFields
+                        ),
+                        responseFields(
+                                beneathPath("token").withSubsectionId("token"),
+                                attributes(key("title").value("Token")),
+                                tokenFields
+                        )
+
+                ));
+    }
+
+    @Test
+    void testSignupEmail() throws Exception {
+        //given
+        AccountDto accountDto = getAccountDto();
+        TokenDto tokenDto = getTokenDto();
+
+        SigninResponseDto response = SigninResponseDto.builder()
+                .account(accountDto)
+                .token(tokenDto)
+                .build();
+
+        willDoNothing().given(accountService)
+                .signup(any(SignupDto.class)); // accountService.signin(socialId)
+
+        given(accountService
+                .signin(any(String.class), any(String.class))) // accountService.signin(socialId)
+                .willReturn(response);
+
+        //when
+        SignupEmailRequestDto signupEmailRequestDto = SignupEmailRequestDto.builder()
+                .email("tridy@gmail.com")
+                .password("tridy123!").nickname("tridy").build();
+
+        ResultActions result = this.mockMvc.perform(
+                post("/api/v1/accounts/signup/email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupEmailRequestDto))
+        );
+
+        //then
+        result.andExpect(status().isCreated())
+                .andDo(document("account-signup", // (4)
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("이메일\n(이메일 형식)"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description(
+                                                "비밀번호\n(대소문자,숫자,특정 특수문자(@#$%^&+=-_!)포함 6글자 이상 12글자 이하)"),
                                 fieldWithPath("nickname").type(JsonFieldType.STRING)
                                         .description("닉네임 \n(2자 이상 10자 이내의 한글,영어,숫자)")
                         ),
