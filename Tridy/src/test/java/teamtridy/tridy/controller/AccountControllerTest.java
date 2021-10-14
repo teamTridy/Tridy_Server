@@ -349,7 +349,7 @@ public class AccountControllerTest extends ApiDocumentationTest {
 
         //then
         result.andExpect(status().isCreated())
-                .andDo(document("account-signup", // (4)
+                .andDo(document("account-signup-email", // (4)
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(

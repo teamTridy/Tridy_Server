@@ -193,19 +193,19 @@ include::{snippets}/account-signup/response-fields-token.adoc[]
 
 ===== Request HTTP Example
 
-include::{snippets}/account-signin-email/http-request.adoc[]
+include::{snippets}/account-signup-email/http-request.adoc[]
 
-include::{snippets}/account-signin-email/request-fields.adoc[]
+include::{snippets}/account-signup-email/request-fields.adoc[]
 
 ==== Response
 
 ===== Response HTTP Example
 
-include::{snippets}/account-signin-email/http-response.adoc[]
+include::{snippets}/account-signup-email/http-response.adoc[]
 
-include::{snippets}/account-signin-email/response-fields.adoc[]
-include::{snippets}/account-signin-email/response-fields-account.adoc[]
-include::{snippets}/account-signin-email/response-fields-token.adoc[]
+include::{snippets}/account-signup-email/response-fields.adoc[]
+include::{snippets}/account-signup-email/response-fields-account.adoc[]
+include::{snippets}/account-signup-email/response-fields-token.adoc[]
 
 [[account-signin]]
 === 소셜 로그인
@@ -239,8 +239,8 @@ include::{snippets}/account-signin/response-fields-token.adoc[]
 
 ==== description
 
-소셜 정보를 통해 로그인합니다.
-회원가입이 안된 소셜정보로 로그인을 시도한 경우 상태코드 401 오류가 발생합니다.
+이메일 정보를 통해 로그인합니다.
+회원가입이 안된 이메일 또는 잘못된 비밀번호로 로그인을 시도한 경우 상태코드 401 오류가 발생합니다.
 
 ==== Request
 
