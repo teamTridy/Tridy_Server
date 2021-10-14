@@ -1,6 +1,7 @@
 package teamtridy.tridy.controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -22,8 +23,10 @@ import teamtridy.tridy.domain.entity.Account;
 import teamtridy.tridy.domain.entity.CurrentUser;
 import teamtridy.tridy.dto.AccountReviewReadAllResponseDto;
 import teamtridy.tridy.dto.PickReadAllResponseDto;
+import teamtridy.tridy.dto.SigninEmailRequestDto;
 import teamtridy.tridy.dto.SigninRequestDto;
 import teamtridy.tridy.dto.SigninResponseDto;
+import teamtridy.tridy.dto.SignupEmailRequestDto;
 import teamtridy.tridy.dto.SignupRequestDto;
 import teamtridy.tridy.dto.TendencyUpdateRequestDto;
 import teamtridy.tridy.service.AccountService;
@@ -58,10 +61,17 @@ public class AccountController {
         return socialId;
     }
 
+    @GetMapping("/duplicate/email")
+    public ResponseEntity isDuplicatedEmail(
+            @RequestParam @Email String email) {
+        accountService.isDuplicatedEmail(email);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
 
     @GetMapping("/duplicate/nickname")
     public ResponseEntity isDuplicatedNickname(
-            @RequestParam String nickname) { //(required = true) true
+            @RequestParam String nickname) {
         accountService.isDuplicatedNickname(nickname);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -72,7 +82,7 @@ public class AccountController {
         String socialType = signinRequestDto.getSocialType();
         String socialToken = signinRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken); //여기 안에서 에러처리 다 해서 null값 안넘어오게 해야함.
-        return new ResponseEntity(accountService.signin(socialId), HttpStatus.OK);
+        return new ResponseEntity(accountService.signin(socialId, socialId), HttpStatus.OK);
     }
 
     @PostMapping("/signup")
@@ -82,7 +92,26 @@ public class AccountController {
         String socialToken = signupRequestDto.getSocialToken();
         String socialId = getSocialId(socialType, socialToken);
         accountService.signup(signupRequestDto.toServiceDto(socialId));
-        return new ResponseEntity(accountService.signin(socialId), HttpStatus.CREATED);
+        return new ResponseEntity(accountService.signin(socialId, socialId), HttpStatus.CREATED);
+    }
+
+    //회원가입
+    @PostMapping("/signup/email")
+    public ResponseEntity<AccountDto> signupViaEmail(
+            @Valid @RequestBody SignupEmailRequestDto signupEmailRequestDto) {
+        accountService.signup(signupEmailRequestDto.toServiceDto());
+        return new ResponseEntity(accountService
+                .signin(signupEmailRequestDto.getEmail(), signupEmailRequestDto.getPassword()),
+                HttpStatus.CREATED);
+    }
+
+    // 로그인
+    @PostMapping("/signin/email")
+    public ResponseEntity<AccountDto> siginViaEmail(
+            @Valid @RequestBody SigninEmailRequestDto signinEmailRequestDto) {
+        return new ResponseEntity(accountService
+                .signin(signinEmailRequestDto.getEmail(), signinEmailRequestDto.getPassword()),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{accountId}")

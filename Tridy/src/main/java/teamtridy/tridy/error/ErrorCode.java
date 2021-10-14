@@ -47,6 +47,7 @@ public enum ErrorCode {
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
     PICK_DUPLICATION(CONFLICT, "이미 찜한 장소입니다"),
     REVIEW_DUPLICATION(CONFLICT, "이미 좋아요한 글입니다"),
+    EMAIL_DUPLICATION(CONFLICT, "이미 사용 중인 이메일입니다"),
 
     /* 500 */
     INTER_SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),

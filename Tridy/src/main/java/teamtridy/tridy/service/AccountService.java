@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamtridy.tridy.config.TokenProvider;
@@ -58,6 +59,7 @@ public class AccountService implements UserDetailsService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PickRepository pickRepository;
     private final ReviewRepository reviewRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 로그인한 유저 정보 반환 to @CurrentUser
     @Transactional(readOnly = true)
@@ -85,11 +87,20 @@ public class AccountService implements UserDetailsService {
         return true;
     }
 
+    //이메일 중복확인
     @Transactional
-    public SigninResponseDto signin(String socialId) {
+    public boolean isDuplicatedEmail(String email) {
+        if (accountRepository.existsBySocialId(email)) {
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATION);
+        }
+        return true;
+    }
+
+    @Transactional
+    public SigninResponseDto signin(String socialId, String password) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                socialId, socialId);
+                socialId, password);
 
         // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
@@ -127,7 +138,7 @@ public class AccountService implements UserDetailsService {
 
         isDuplicatedNickname(signupDto.getNickname());
 
-        Account account = signupDto.toAccount();
+        Account account = signupDto.toAccount(passwordEncoder);
         accountRepository.save(account);
     }
 
