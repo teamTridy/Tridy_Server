@@ -21,16 +21,32 @@ import teamtridy.tridy.service.OpenWeatherService;
 @Slf4j
 public class WeatherController {
 
-    private static final String STR_JEJU_AIRPORT_LATITUDE = "33.5072404";
-    private static final String STR_JEJU_AIRPORT_LONGITUDE = "126.4924838";
+    private static final String JEJU_ISLAND = "제주특별자치도";
+    private static final String BLANK_SPACE = " ";
     private final OpenWeatherService openWeatherService;
     private final KakaoService kakaoService;
 
+    private boolean isInJeju(String address) {
+        String region1depthName = address.split(BLANK_SPACE)[0];
+        return region1depthName.equals(JEJU_ISLAND);
+    }
+
     @GetMapping("/current")
     public ResponseEntity<WeatherCurrentResponseDto> current(
-            @RequestParam(required = false, defaultValue = STR_JEJU_AIRPORT_LATITUDE) Double latitude,
-            @RequestParam(required = false, defaultValue = STR_JEJU_AIRPORT_LONGITUDE) Double longitude) {
-        String address = kakaoService.getAddress(latitude, longitude);
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude) {
+
+        String address = null; // latitude == null || longitude == null
+        if (latitude != null && longitude != null) {
+            address = kakaoService.getAddress(latitude, longitude);
+        }
+
+        if (address == null || !isInJeju(address)) {
+            address = JejuAirport.ADDRESS;
+            latitude = JejuAirport.LATITUDE;
+            longitude = JejuAirport.LONGITUDE;
+        }
+
         return new ResponseEntity(
                 openWeatherService.getCurrentWeather(latitude, longitude, address),
                 HttpStatus.OK);
