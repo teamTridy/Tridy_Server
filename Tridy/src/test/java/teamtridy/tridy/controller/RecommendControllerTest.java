@@ -55,9 +55,9 @@ class RecommendControllerTest extends ApiDocumentationTest {
         Boolean shouldBeIndoorsToday = false;
 
         given(openWeatherService
-                .shouldBeIndoorsToday(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+                .shouldBeIndoorsToday(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(shouldBeIndoorsToday);
-        given(kakaoService.getAddress(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+        given(kakaoService.getAddress(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(address);
 
         List<String> hashtags1 = Arrays.asList("경관포토", "걷기등산", "맑음", "커플");
@@ -99,7 +99,7 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .build();
 
         given(recommendService
-                .readMain(account, JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE, address,
+                .readMain(account, JejuAirport.LATITUDE, JejuAirport.LONGITUDE, address,
                         shouldBeIndoorsToday))
                 .willReturn(mainRecommendReadResponseDto);
 
@@ -107,8 +107,8 @@ class RecommendControllerTest extends ApiDocumentationTest {
         ResultActions result = this.mockMvc.perform(
                 get("/api/v1/accounts/{accountId}/recommends/mains", 1L)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                        .param("latitude", STR_JEJU_AIRPORT_LATITUDE)
-                        .param("longitude", STR_JEJU_AIRPORT_LONGITUDE)
+                        .param("latitude", JejuAirport.STR_LATITUDE)
+                        .param("longitude", JejuAirport.STR_LONGITUDE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         );
@@ -129,10 +129,10 @@ class RecommendControllerTest extends ApiDocumentationTest {
                         requestParameters(
                                 parameterWithName("latitude")
                                         .description("위도\n(위치정보제공 미동의시 생략)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LATITUDE + "(제주공항))").optional(),
+                                                + JejuAirport.STR_LATITUDE + "(제주공항))").optional(),
                                 parameterWithName("longitude")
                                         .description("경도\n(위치정보제공 미동의시 생략)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LONGITUDE + "(제주공항))").optional()
+                                                + JejuAirport.STR_LONGITUDE + "(제주공항))").optional()
                         ),
                         responseFields(
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -161,13 +161,13 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .willReturn(this.account);
 
         //given
-        String address = "제주특별자치도 서귀포시 남원읍 신례동로 256";
+        String address = JejuAirport.ADDRESS;
         Boolean shouldBeIndoorsToday = false;
 
         given(openWeatherService
-                .shouldBeIndoorsToday(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+                .shouldBeIndoorsToday(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(shouldBeIndoorsToday);
-        given(kakaoService.getAddress(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+        given(kakaoService.getAddress(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(address);
 
         List<String> hashtags1 = Arrays.asList("경관포토", "걷기등산", "맑음", "커플");
@@ -193,15 +193,6 @@ class RecommendControllerTest extends ApiDocumentationTest {
                         "http://tong.visitkorea.or.kr/cms/resource/62/2661662_image2_1.jpg")
                 .isPicked(true).relateds(relates).build();
 
-        MainRecommendPlaceDto recommendPlaceDto2 = MainRecommendPlaceDto.builder().id(1L)
-                .congestion(3)
-                .distance(1.7F)
-                .name("성산일출봉 [유네스코 세계자연유산]")
-                .hashtags(hashtags1)
-                .imgUrl(
-                        "http://tong.visitkorea.or.kr/cms/resource/85/1876185_image3_1.jpg")
-                .isPicked(false).relateds(relates).build();
-
         List<MainRecommendPlaceDto> mainRecommendPlaceDtos = Arrays
                 .asList(recommendPlaceDto1, recommendPlaceDto1);
         MainRecommendReadResponseDto mainRecommendReadResponseDto = MainRecommendReadResponseDto
@@ -209,13 +200,13 @@ class RecommendControllerTest extends ApiDocumentationTest {
                 .build();
 
         given(recommendService
-                .createMain(account, JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE, address,
+                .createMain(account, JejuAirport.LATITUDE, JejuAirport.LONGITUDE, address,
                         shouldBeIndoorsToday))
                 .willReturn(mainRecommendReadResponseDto);
 
         //when
         MainRecommendCreateRequestDto mainRecommendCreateRequestDto = MainRecommendCreateRequestDto
-                .builder().latitude(JEJU_AIRPORT_LATITUDE).longitude(JEJU_AIRPORT_LONGITUDE)
+                .builder().latitude(JejuAirport.LATITUDE).longitude(JejuAirport.LONGITUDE)
                 .build();
 
         ResultActions result = this.mockMvc.perform(
@@ -242,10 +233,10 @@ class RecommendControllerTest extends ApiDocumentationTest {
                         requestFields(
                                 fieldWithPath("latitude")
                                         .description("위도\n(위치정보제공 미동의시 null)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LATITUDE + "(제주공항))").optional(),
+                                                + JejuAirport.STR_LATITUDE + "(제주공항))").optional(),
                                 fieldWithPath("longitude")
                                         .description("경도\n(위치정보제공 미동의시 null)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LONGITUDE + "(제주공항))").optional()
+                                                + JejuAirport.STR_LONGITUDE + "(제주공항))").optional()
                         ),
                         responseFields(
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -278,9 +269,9 @@ class RecommendControllerTest extends ApiDocumentationTest {
         Boolean shouldBeIndoorsToday = false;
 
         given(openWeatherService
-                .shouldBeIndoorsToday(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+                .shouldBeIndoorsToday(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(shouldBeIndoorsToday);
-        given(kakaoService.getAddress(JEJU_AIRPORT_LATITUDE, JEJU_AIRPORT_LONGITUDE))
+        given(kakaoService.getAddress(JejuAirport.LATITUDE, JejuAirport.LONGITUDE))
                 .willReturn(address);
 
         List<String> hashtags1 = Arrays.asList("경관포토", "걷기등산", "맑음", "커플");

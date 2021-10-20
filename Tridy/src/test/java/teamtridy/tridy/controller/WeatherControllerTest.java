@@ -73,10 +73,10 @@ class WeatherControllerTest extends ApiDocumentationTest {
                         requestParameters(
                                 parameterWithName("latitude")
                                         .description("위도\n(위치정보제공 미동의시 생략)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LATITUDE + "(제주공항))").optional(),
+                                                + JejuAirport.STR_LATITUDE + "(제주공항))").optional(),
                                 parameterWithName("longitude")
                                         .description("경도\n(위치정보제공 미동의시 생략)\n(기본값:"
-                                                + STR_JEJU_AIRPORT_LONGITUDE + "(제주공항))").optional()
+                                                + JejuAirport.STR_LONGITUDE + "(제주공항))").optional()
                         ),
                         responseFields(
                                 fieldWithPath("time").type(JsonFieldType.STRING)

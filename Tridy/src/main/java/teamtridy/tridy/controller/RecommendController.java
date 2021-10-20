@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,27 +31,39 @@ import teamtridy.tridy.service.RecommendService;
 @Slf4j
 public class RecommendController {
 
-    private static final Double JEJU_AIRPORT_LATITUDE = 33.5072404;
-    private static final Double JEJU_AIRPORT_LONGITUDE = 126.4924838;
-
-    private static final String STR_JEJU_AIRPORT_LATITUDE = "33.5072404";
-    private static final String STR_JEJU_AIRPORT_LONGITUDE = "126.4924838";
-
+    private static final String JEJU_ISLAND = "제주특별자치도";
+    private static final String BLANK_SPACE = " ";
     private final OpenWeatherService openWeatherService;
     private final KakaoService kakaoService;
     private final RecommendService recommendService;
+
+    private boolean isInJeju(String address) {
+        String region1depthName = address.split(BLANK_SPACE)[0];
+        return region1depthName.equals(JEJU_ISLAND);
+    }
 
     @GetMapping("/mains")
     public ResponseEntity<MainRecommendReadResponseDto> readMain(
             @CurrentUser Account account,
             @PathVariable Long accountId,
-            @RequestParam(defaultValue = STR_JEJU_AIRPORT_LATITUDE) Double latitude,
-            @RequestParam(defaultValue = STR_JEJU_AIRPORT_LONGITUDE) Double longitude) {
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude) {
 
         if (accountId != account.getId()) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
-        String address = kakaoService.getAddress(latitude, longitude);
+
+        String address = null; // latitude == null || longitude == null
+        if (latitude != null && longitude != null) {
+            address = kakaoService.getAddress(latitude, longitude);
+        }
+
+        if (address == null || !isInJeju(address)) {
+            address = JejuAirport.ADDRESS;
+            latitude = JejuAirport.LATITUDE;
+            longitude = JejuAirport.LONGITUDE;
+        }
+
         Boolean shouldBeIndoorsToday = openWeatherService.shouldBeIndoorsToday(latitude, longitude);
 
         return new ResponseEntity(recommendService
@@ -62,7 +75,7 @@ public class RecommendController {
     public ResponseEntity<MainRecommendReadResponseDto> createMain(
             @CurrentUser Account account,
             @PathVariable Long accountId,
-            @Valid MainRecommendCreateRequestDto mainRecommendCreateRequestDto) {
+            @Valid @RequestBody MainRecommendCreateRequestDto mainRecommendCreateRequestDto) {
 
         if (accountId != account.getId()) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
@@ -71,10 +84,17 @@ public class RecommendController {
         Double latitude = mainRecommendCreateRequestDto.getLatitude();
         Double longitude = mainRecommendCreateRequestDto.getLongitude();
 
-        latitude = (latitude == null) ? JEJU_AIRPORT_LATITUDE : latitude;
-        longitude = (longitude == null) ? JEJU_AIRPORT_LONGITUDE : longitude;
+        String address = null; // latitude == null || longitude == null
+        if (latitude != null && longitude != null) {
+            address = kakaoService.getAddress(latitude, longitude);
+        }
 
-        String address = kakaoService.getAddress(latitude, longitude);
+        if (address == null || !isInJeju(address)) {
+            address = JejuAirport.ADDRESS;
+            latitude = JejuAirport.LATITUDE;
+            longitude = JejuAirport.LONGITUDE;
+        }
+
         Boolean shouldBeIndoorsToday = openWeatherService.shouldBeIndoorsToday(latitude, longitude);
 
         return new ResponseEntity(recommendService

@@ -140,7 +140,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
                     + "\t\t\tand place_id in (select distinct(place_id) from place_hashtag where hashtag_id in (1645,1674,1925,535))\n"
                     + "\t\t\tand place_id not in (select distinct(place_id) from review where account_id  = :accountId )\n"
                     + "\t\t\tand place_id not in (select distinct(place_id) from recommend where account_id  = :accountId and recommend_type_id = 1))\n"
-                    + "ORDER BY rand()\n"
+                    + "ORDER BY (case when distance <= 20 then 1 else 2 end ), rand()\n"
                     + "limit 0,:count", nativeQuery = true)
     List<DistanceIncludePlace> findTopCountPlaceByIndoorWeather(Long accountId, Double latitude,
             Double longitude, Integer count);
@@ -153,7 +153,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
                     + "\t\t\twhere origin_content_id is not null \n"
                     + "\t\t\tand place_id not in (select distinct(place_id) from review where account_id  = :accountId )\n"
                     + "\t\t\tand place_id not in (select distinct(place_id) from recommend where account_id  = :accountId and recommend_type_id = 1))\n"
-                    + "ORDER BY rand()\n"
+                    + "ORDER BY (case when distance <= 20 then 1 else 2 end ), rand()\n"
                     + "limit 0,:count", nativeQuery = true)
     List<DistanceIncludePlace> findTopCountPlace(Long accountId, Double latitude,
             Double longitude, Integer count);

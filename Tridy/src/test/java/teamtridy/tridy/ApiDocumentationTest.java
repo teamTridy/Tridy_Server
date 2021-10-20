@@ -51,12 +51,6 @@ public abstract class ApiDocumentationTest {
     protected static final String BEARER_TYPE = "bearer";
     protected static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 365; // 1년
 
-    protected static final String STR_JEJU_AIRPORT_LATITUDE = "33.5072404";
-    protected static final String STR_JEJU_AIRPORT_LONGITUDE = "126.4924838";
-
-    protected static final Double JEJU_AIRPORT_LATITUDE = 33.5072404;
-    protected static final Double JEJU_AIRPORT_LONGITUDE = 126.4924838;
-
     protected FieldDescriptor[] placeFields = new FieldDescriptor[]{
             fieldWithPath("id").type(JsonFieldType.NUMBER)
                     .description("장소 고유 id값"),
