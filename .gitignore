@@ -52,8 +52,7 @@ build/
 
 ########## python data collection ###########
 # config file
-db.py
-api.py
+config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
