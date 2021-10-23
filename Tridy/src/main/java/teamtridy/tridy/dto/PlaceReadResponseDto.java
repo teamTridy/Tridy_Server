@@ -45,9 +45,9 @@ public class PlaceReadResponseDto {
         }
 
         Boolean isPicked = account.getPicks()
-                .stream().map(pick -> pick.getPlace())
+                .stream().map(pick -> pick.getPlace().getId())
                 .collect(Collectors.toList())
-                .contains(place);
+                .contains(place.getId());
 
         placeDto.setIsPicked(isPicked);
 

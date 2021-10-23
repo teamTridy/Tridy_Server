@@ -1,6 +1,7 @@
 package teamtridy.tridy.domain.repository;
 
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,6 +39,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     Slice<Place> findAllByQueryAndCategoryInAndRegionIn(String query, List<Category> categories,
             List<Region> regions, Pageable pageable);
 
+    @Cacheable(value = "readAllPlaceByDepth1OrderByReviewCountCache", key = "#pageable.getPageNumber()+#pageable.getPageSize()+#depth1CategoryId")
     @Query(value =
             "SELECT * FROM place p LEFT JOIN review r on p.place_id = r.place_id \n"
                     + "WHERE p.category_id in (select category_id from category where parent_id in (select category_id from category where parent_id = :depth1CategoryId))\n"

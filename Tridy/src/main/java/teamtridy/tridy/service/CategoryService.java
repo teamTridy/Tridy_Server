@@ -129,7 +129,6 @@ public class CategoryService {
                 .places(placeDtos).build();
     }
 
-    @Cacheable(value = "readAllPlaceByDepth1OrderByReviewCountCache", key = "#page+#size+#depth1CategoryId")
     @Transactional
     public PlaceReadAllResponseDto readAllPlaceByDepth1OrderByReviewCount(Account account,
             Integer page,
