@@ -33,6 +33,7 @@ import teamtridy.tridy.service.AccountService;
 import teamtridy.tridy.service.AppleService;
 import teamtridy.tridy.service.GoogleService;
 import teamtridy.tridy.service.KakaoService;
+import teamtridy.tridy.service.RecommendService;
 import teamtridy.tridy.service.dto.AccountDto;
 
 @RestController
@@ -42,6 +43,7 @@ import teamtridy.tridy.service.dto.AccountDto;
 @Slf4j
 public class AccountController {
 
+    private final RecommendService recommendService;
     private final AccountService accountService;
     private final KakaoService kakaoService;
     private final GoogleService googleService;
@@ -125,6 +127,7 @@ public class AccountController {
     public ResponseEntity<AccountDto> updateTendency(@CurrentUser Account account,
             @PathVariable Long accountId,
             @Valid @RequestBody TendencyUpdateRequestDto tendencyUpdateRequestDto) {
+        recommendService.deleteInterest(account);
         return new ResponseEntity(
                 accountService.updateTendency(account, accountId, tendencyUpdateRequestDto),
                 HttpStatus.OK);

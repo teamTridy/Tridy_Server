@@ -411,4 +411,8 @@ public class RecommendService {
 
     }
 
+    @Transactional
+    public void deleteInterest(Account account) {
+        recommendRepository.deleteAllByAccount(account);
+    }
 }
