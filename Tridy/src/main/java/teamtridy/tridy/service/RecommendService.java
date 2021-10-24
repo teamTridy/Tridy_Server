@@ -413,6 +413,12 @@ public class RecommendService {
 
     @Transactional
     public void deleteInterest(Account account) {
-        recommendRepository.deleteAllByAccount(account);
+        RecommendType interest1RecommendType = recommendTypeRepository
+                .getById(INTEREST1_RECOMMEND_TYPE_ID);
+        RecommendType interest2RecommendType = recommendTypeRepository
+                .getById(INTEREST2_RECOMMEND_TYPE_ID);
+
+        recommendRepository.deleteAllByAccountAndRecommendType(account, interest1RecommendType);
+        recommendRepository.deleteAllByAccountAndRecommendType(account, interest2RecommendType);
     }
 }

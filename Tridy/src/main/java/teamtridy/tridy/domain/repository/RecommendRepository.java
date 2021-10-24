@@ -177,7 +177,8 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     void deleteAllByCreatedAtBetweenAndRecommendType(LocalDateTime startTime, LocalDateTime endTime,
             RecommendType recommendType);
 
-    void deleteAllByAccount(Account account);
+
+    void deleteAllByAccountAndRecommendType(Account account, RecommendType interest2RecommendType);
 
     interface DistanceIncludePlace {
 
