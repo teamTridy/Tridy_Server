@@ -61,7 +61,7 @@ public class RecommendService {
                 .getById(INTEREST2_RECOMMEND_TYPE_ID);
 
         List<Recommend> interest1Recommends = recommendRepository
-                .findByAccountAndCreatedAtBetweenAndRecommendType(account, todayStartTime,
+                .findByAccountAndCreatedAtBetweenAndRecommendTypeOrderById(account, todayStartTime,
                         todayEndTime, interest1RecommendType);
 
         if (interest1Recommends.isEmpty()) { // 없으면 새로 생성
@@ -69,7 +69,7 @@ public class RecommendService {
         }
 
         List<Recommend> interest2Recommends = recommendRepository
-                .findByAccountAndCreatedAtBetweenAndRecommendType(account, todayStartTime,
+                .findByAccountAndCreatedAtBetweenAndRecommendTypeOrderById(account, todayStartTime,
                         todayEndTime, interest2RecommendType);
 
         List<RecommendPlaceDto> interest1RecommendPlaceDtos = interest1Recommends.stream()

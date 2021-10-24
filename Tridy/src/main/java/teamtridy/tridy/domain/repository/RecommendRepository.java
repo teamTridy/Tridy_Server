@@ -170,7 +170,7 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
             LocalDateTime todayStartTime, LocalDateTime todayEndTime,
             RecommendType mainRecommendType);
 
-    List<Recommend> findByAccountAndCreatedAtBetweenAndRecommendType(Account account,
+    List<Recommend> findByAccountAndCreatedAtBetweenAndRecommendTypeOrderById(Account account,
             LocalDateTime todayStartTime, LocalDateTime todayEndTime,
             RecommendType recommendType);
 
