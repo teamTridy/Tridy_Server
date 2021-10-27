@@ -42,7 +42,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Cacheable(value = "readAllPlaceByDepth1OrderByReviewCountCache", key = "#pageable.getPageNumber()+#pageable.getPageSize()+#depth1CategoryId")
     @Query(value =
             "SELECT * FROM place p LEFT JOIN review r on p.place_id = r.place_id \n"
-                    + "WHERE p.category_id in (select category_id from category where parent_id in (select category_id from category where parent_id = :depth1CategoryId))\n"
+                    + "WHERE p.category_id in (select category_id from category where parent_id in (select category_id from category where parent_id = :depth1CategoryId)) and r.is_private = false \n"
                     + "GROUP BY p.place_id \n"
                     + "ORDER BY \n"
                     + "\t(CASE WHEN COUNT(r.place_id) != 0 THEN 1 ELSE 2 END), \n"
