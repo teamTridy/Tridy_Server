@@ -16,7 +16,7 @@ public class Scheduler {
     private final RecommendService recommendService;
 
     @Scheduled(cron = "0 59 23 * * *")
-    @CacheEvict(value = {"congestionCache",
+    @CacheEvict(value = {"congestionCache", "VillageForecastCurrentWeatherCache",
             "readAllPlaceByDepth1OrderByReviewCountCache"}, allEntries = true)
     public void deleteCache() {
         log.info("Cache deleted");
