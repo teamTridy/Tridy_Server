@@ -45,7 +45,7 @@ class WeatherControllerTest extends ApiDocumentationTest {
                         LocalDateTime.now()).description("맑음").build();
         given(kakaoService.getAddress(33.3085171454, 126.6344317363))
                 .willReturn("제주특별자치도 서귀포시 남원읍 신례동로 256");
-        given(openWeatherService
+        given(villageForecastService
                 .getCurrentWeather(33.3085171454, 126.6344317363,
                         "제주특별자치도 서귀포시 남원읍 신례동로 256"))
                 .willReturn(weatherCurrentResponseDto);

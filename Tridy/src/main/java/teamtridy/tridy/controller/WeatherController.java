@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import teamtridy.tridy.dto.WeatherCurrentResponseDto;
 import teamtridy.tridy.service.KakaoService;
-import teamtridy.tridy.service.OpenWeatherService;
+import teamtridy.tridy.service.VillageForecastService;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class WeatherController {
 
     private static final String JEJU_ISLAND = "제주특별자치도";
     private static final String BLANK_SPACE = " ";
-    private final OpenWeatherService openWeatherService;
+    private final VillageForecastService villageForecastService;
     private final KakaoService kakaoService;
 
     private boolean isInJeju(String address) {
@@ -48,7 +48,7 @@ public class WeatherController {
         }
 
         return new ResponseEntity(
-                openWeatherService.getCurrentWeather(latitude, longitude, address),
+                villageForecastService.getCurrentWeather(latitude, longitude, address),
                 HttpStatus.OK);
     }
 }

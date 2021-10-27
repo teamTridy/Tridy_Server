@@ -41,6 +41,7 @@ import teamtridy.tridy.service.KakaoService;
 import teamtridy.tridy.service.OpenWeatherService;
 import teamtridy.tridy.service.PlaceService;
 import teamtridy.tridy.service.RecommendService;
+import teamtridy.tridy.service.VillageForecastService;
 
 // https://velog.io/@hydroniumion/BE2%EC%A3%BC%EC%B0%A8-Spring-Rest-Docs-%EC%A0%81%EC%9A%A9%EA%B8%B0-2 드디어 작동하는 참고 문서!
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -218,6 +219,8 @@ public abstract class ApiDocumentationTest {
     @MockBean
     protected JobService jobService;
 
+    @MockBean
+    protected VillageForecastService villageForecastService;
 
     @BeforeEach // 테스트 클래스 테스트 시작시 1번만호출
     public void setUp(WebApplicationContext webApplicationContext,
