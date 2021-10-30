@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import teamtridy.tridy.domain.repository.PlaceRepository;
-import teamtridy.tridy.error.ExternalException;
 import teamtridy.tridy.service.dto.TourCongestionResponseDto;
 import teamtridy.tridy.service.dto.TourCongestionResponseDto.Items;
 
@@ -84,7 +83,9 @@ public class TourService {
                     .exchange(uri, HttpMethod.GET, request,
                             TourCongestionResponseDto.class);
         } catch (Exception e) {
-            throw new ExternalException(e);
+            //throw new ExternalException(e);
+            log.error("congestion error", e);
+            return null; // read time out 발생시 혼잡도 조회 실패로 간주
         }
 
         Items items = response
