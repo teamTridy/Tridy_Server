@@ -54,7 +54,6 @@ public class VillageForecastService {
             String baseDate,
             String baseTime) {
 
-        log.info("api calls");
         // Set http entity
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null,

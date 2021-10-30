@@ -80,7 +80,6 @@ public class TourService {
         ResponseEntity<TourCongestionResponseDto> response;
 
         try {
-            // Request current weather
             response = restTemplate
                     .exchange(uri, HttpMethod.GET, request,
                             TourCongestionResponseDto.class);
