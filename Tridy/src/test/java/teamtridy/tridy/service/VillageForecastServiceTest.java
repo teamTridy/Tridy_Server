@@ -34,10 +34,4 @@ class VillageForecastServiceTest {
                         JejuAirport.ADDRESS);
         System.out.println(weatherCurrentResponseDto.getDescription());
     }
-
-    @Test
-    void shouldBeIndoorsToday() {
-        villageForecastService
-                .shouldBeIndoorsToday(JejuAirport.LATITUDE, JejuAirport.LONGITUDE);
-    }
 }
