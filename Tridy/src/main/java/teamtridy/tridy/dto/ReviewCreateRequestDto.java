@@ -19,7 +19,7 @@ public class ReviewCreateRequestDto {
     private Integer rating;
 
     @NotBlank(message = "comment is required")
-    @Length(max = 50, message = "댓글은 최대 50자까지 작성할 수 있습니다.")
+    @Length(max = 100, message = "댓글은 최대 100자(이모티콘은 한개당 2자 차지)까지 작성할 수 있습니다.")
     private String comment;
 
     @NotNull(message = "isPrivate is required")
