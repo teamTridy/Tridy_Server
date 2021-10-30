@@ -310,7 +310,13 @@ public class RecommendService {
                         mainRecommendType);
 
         if (!todayMainRecommendsByAddress.isEmpty()) {
-            recommendRepository.deleteAll(todayMainRecommendsByAddress);
+            recommendRepository
+                    .deleteTop5ByAccountAndReferenceAddressAndCreatedAtBetweenAndRecommendType(
+                            account,
+                            address,
+                            todayStartTime,
+                            todayEndTime,
+                            mainRecommendType);
         }
 
         List<DistanceIncludePlace> DistanceIncludePlaces = readMainDistanceIncludePlaces(

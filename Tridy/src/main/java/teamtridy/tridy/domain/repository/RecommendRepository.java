@@ -180,6 +180,11 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
 
     void deleteAllByAccountAndRecommendType(Account account, RecommendType interest2RecommendType);
 
+    void deleteTop5ByAccountAndReferenceAddressAndCreatedAtBetweenAndRecommendType(Account account,
+            String address,
+            LocalDateTime todayStartTime, LocalDateTime todayEndTime,
+            RecommendType mainRecommendType);
+
     interface DistanceIncludePlace {
 
         Long getId();
